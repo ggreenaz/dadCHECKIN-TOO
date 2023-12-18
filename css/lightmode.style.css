@@ -1,0 +1,123 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0; /* Light grey */
+    padding: 20px;
+    text-align: center;
+    color: #333333; /* Dark grey text */
+}
+
+.button, a {
+    display: inline-block;
+    background-color: #007bff; /* Light blue */
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.button:hover, a:hover {
+    background-color: #0056b3; /* Darker blue for hover */
+}
+
+table {
+    margin-top: 20px;
+    width: 60%;
+    border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #cccccc; /* Light border */
+    text-align: left;
+    background-color: #ffffff; /* White for cells */
+}
+
+th {
+    background-color: #e9ecef; /* Very light grey for header */
+}
+
+td {
+    background-color: #f0f0f0; /* Light grey to match body */
+}
+
+.form-row {
+    margin-bottom: 15px;
+}
+
+input[type="submit"], input[type="text"], select {
+    padding: 5px 10px;
+    margin-right: 10px;
+    border-radius: 3px;
+    border: 1px solid #cccccc; /* Light grey border */
+    background-color: #ffffff; /* White background */
+    color: #333333; /* Dark grey text */
+}
+
+input[type="submit"] {
+    background-color: #007bff; /* Light blue */
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover {
+    background-color: #0056b3; /* Darker blue for hover */
+}
+
+.delete-button {
+    background-color: #dc3545; /* Bright red */
+}
+
+.edit-button {
+    background-color: #28a745; /* Green */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.edit-button:hover {
+    background-color: #218838; /* Darker green for hover */
+}
+
+.print-button:hover {
+    background-color: darkred;
+}
+.chart-container {
+    width: 400px; /* Set your desired width */
+    height: 300px; /* Set your desired height */
+    margin: auto; /* Center the chart if desired */
+}
+#reason-for-visit-container {
+    width: 500px;
+    height: 400px;
+}
+
+#person-being-visited-container {
+    width: 300px;
+    height: 250px;
+}
+/* ...and so on for other charts... */
+/* Existing styles... */
+
+/* Styles for Chart Containers */
+.chart-container {
+    width: 600px; /* Adjust the width as needed */
+    height: 400px; /* Adjust the height as needed */
+    margin: auto; /* Center the chart on the page */
+    margin-top: 20px; /* Space above the chart container */
+}
+
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* You might want to add additional styling specific to your charts here */
+

@@ -1,0 +1,137 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #174bc3; /* Dark blue background */
+    padding: 20px;
+    text-align: center;
+    color: #e5e9e3; /* Light grey text for good contrast */
+}
+
+.edit-form table {
+    margin: auto;
+    background-color: #8e96a5; /* Grey background for table */
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.edit-form td {
+    padding: 5px;
+}
+
+.edit-form input[type="text"], .edit-form input[type="submit"] {
+    padding: 5px;
+    border-radius: 3px;
+    border: 1px solid #ddd; /* Neutral border color */
+}
+
+.edit-form input[type="submit"] {
+    background-color: #28a629; /* Green button background */
+    color: white; /* White text for readability */
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.edit-form input[type="submit"]:hover {
+    background-color: #d4c821; /* Yellow background on hover */
+}
+
+table {
+    margin-top: 20px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd; /* Neutral border color */
+    text-align: left;
+    background-color: #8e96a5; /* Grey background for table cells */
+}
+
+th {
+    background-color: #174bc3; /* Dark blue background for table header */
+}
+
+form button {
+    background-color: #28a629; /* Green button background */
+    color: white; /* White text for readability */
+    border: none;
+    padding: 5px 10px;
+    margin: 2px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+form button:hover {
+    background-color: #d4c821; /* Yellow background on hover */
+}
+
+.button, a {
+    display: inline-block;
+    background-color: #28a629; /* Green button background */
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    color: white; /* White text for readability */
+    text-decoration: none;
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.button:hover, a:hover {
+    background-color: #d4c821; /* Yellow background on hover */
+}
+
+/* Red delete button styling */
+.delete-button {
+    background-color: #d0c993; /* Light beige for delete button */
+    color: white; /* White text for readability */
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.delete-button:hover {
+    background-color: #7f6e5d; /* Darker shade for delete button hover */
+}
+
+/* ... Additional styles if needed ... */
+
+.print-button:hover {
+    background-color: darkred;
+}
+.chart-container {
+    width: 400px; /* Set your desired width */
+    height: 300px; /* Set your desired height */
+    margin: auto; /* Center the chart if desired */
+}
+#reason-for-visit-container {
+    width: 500px;
+    height: 400px;
+}
+
+#person-being-visited-container {
+    width: 300px;
+    height: 250px;
+}
+/* ...and so on for other charts... */
+/* Existing styles... */
+
+/* Styles for Chart Containers */
+.chart-container {
+    width: 600px; /* Adjust the width as needed */
+    height: 400px; /* Adjust the height as needed */
+    margin: auto; /* Center the chart on the page */
+    margin-top: 20px; /* Space above the chart container */
+}
+
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* You might want to add additional styling specific to your charts here */
