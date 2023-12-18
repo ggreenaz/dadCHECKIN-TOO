@@ -13,8 +13,8 @@ dadCHECKIN-TOO cuts through the clutter, focusing solely on what matters: who's 
 
 Key Features:
 
-    Easy Peasy Setup: So straightforward, even your dad won't ask, "Which button do I click?"
-    Basic Check-In/Out: Captures who, when, and why without the need for a rocket science degree.
+    DIFFERENT FROM dadCHECKIN: 
+
     Administrator Upload: Designed for organizations, administrators can easily upload user data.
     Email Prefix Login: Users simply supply their email prefix to log in and out.
     Dad-Proof Design: Robust enough to withstand accidental coffee spills and those infamous 'just tinkering' sessions.
