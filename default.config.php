@@ -1,7 +1,7 @@
 <?php
 $host = 'localhost';
-$db   = 'dadlightdb';
-$user = 'dadlightadmin';
+$db   = 'dadtoodb';
+$user = 'dadtooadmin';
 $pass = 'g0p@ck';
 $charset = 'utf8mb4';
 
