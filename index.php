@@ -141,6 +141,7 @@ if (isset($_POST['checkout'])) {
     </style>
 </head>
 <body>
+    <img src="./img/dnd-project-sm-logo.png">
     <h1>Visitor Check-In and Check-Out</h1>
 
     <!-- Display Success and Error Messages -->
