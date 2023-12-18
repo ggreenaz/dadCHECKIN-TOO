@@ -22,13 +22,12 @@ Ideal For:
     Schools, offices, events – anywhere that needs a simple visitor log.
     People who appreciate dad-level simplicity (and dad jokes!).
 
-Remember, in the world of overly complicated software, dadCHECKIN-TOO is your oasis of simplicity. It's the tool that proudly proclaims, "So easy, even a dad can use it!" And if you chuckle at that, you're exactly who we made this for!
-👨‍💼 Join the dadCHECKIN-TOO revolution – where simplicity meets functionality, and dad jokes are always welcome!
+In a world of complex software, dadCHECKIN-TOO is your simple oasis. It proudly says, "So easy, even a dad can use it!" If you chuckled, you're our target audience! Join the dadCHECKIN-TOO revolution – where simplicity meets functionality, and dad jokes are welcome! 👨‍💼
 
 
 // Install Directions //
 
-Let's get started.
+Let's go ahead and get started.
 
 Upload the latest version of dadCHECKIN-TOO to your web server's root directory. Be sure to set your directory privileges so your web servers has acess. For example:
 
@@ -61,9 +60,9 @@ It's crucial to set these permissions correctly to balance security and function
 
 Let's run the installation script after you have set your ownership and directory permissions accordingly. 
 
-// HOSTED SITES NOTE: I some cases you will may struggle with getting the install script to run on hosted sites. I have included a config.php.example file for you to edit manually. Keep in mind, if you are hosting OnPrem you most likelly not have an issue with the install script, however you may run into issues on hosted websites. Edit this file manually to ensure you can run the software without having to programagically have it done for you.
+// HOSTED SITES NOTE: In some cases, you will may struggle with getting the install script to run on hosted sites. I have included a default.config.php file for you to edit manually. Keep in mind, if you are hosting OnPrem you most likelly not have an issue with the install script, however you may run into issues on hosted websites. Edit this file manually to ensure you can run the software without having to "programmatically" have it done for you.
 
-Also, I want to talk about the paths to ../img and ../css/ directories. You MUST configure those as well based upon web root of your site. I am putting those paths in for many users, but NOT ALL USERS. If the look of the site does not reflect the photos in the Wiki, the /css/styles.css file is not configured well. Check that out.
+Also, I want to talk about the paths to ../img and ../css/ directories. You'll need to configure those as well based on the web root of your site. I am putting those paths in for many users, but NOT ALL USERS. If the look of the site does not reflect the photos in the Wiki, the /css/styles.css file is not configured well. Check that out.
 
 If you are getting broken images, the same may be true for the /img/ direcotry. Look at how your scripts are pointing to your img/ direcotory. Now, onto our redullarly schecduled install. \\
 
@@ -74,7 +73,7 @@ Point your web browser to:
 
 You will be asked to provide your database credentials to your database. This README is assuming you have already set those before you try to run the Install script. If you need help on that, this site is a good starting point, but you do  you! https://www.hostinger.com/tutorials/mysql/how-create-mysql-user-and-grant-permissions-command-line
     
-        Start the installation by hitting the Install button. 
+        You can start the installation by hitting the Install button. 
 
 You will need to populate your database with the desired information for your dropdown menus. You will see the button that allows you to add Persons and Reasons for the visit. Point your browser to:
 
@@ -82,7 +81,7 @@ You will need to populate your database with the desired information for your dr
 
 Add your data to the database.
 
-In future distributions of dadCHECKIN-TOO I plan to add the authentication to protect your admin/ directory, but that will come a bit later, unless you want to do that work and contribute. Love to have. In the meantime, we are going to do this with a simple, and yes, I know, unsophisticated, use of the .htacces process.  
+In future distributions of dadCHECKIN-TOO, I plan to add the authentication to protect your admin/ directory, but that will come a bit later unless you want to do that work and contribute. Love to have. In the meantime, we are going to do this with a simple, and yes, I know, unsophisticated, use of the .htacces process.  
 
 The primary reason for using .htaccess for basic authentication is to add a layer of security to your web directories. By requiring a username and password, you can restrict access to your admin/ directory.
 
@@ -92,7 +91,7 @@ Control: It allows for decentralized management of access control. Different dir
 Instructions for Password Protecting a Directory
 Step 1: Create the .htaccess File
 
-Open a terminal on your Ubuntu server. In this example I am assuming that you will put your files in the /var/www/html web root, but you may want to create a subdirectory like/var/www/html/dad/. In the end, you decide, Okay?
+Open a terminal on your Ubuntu server. In this example, I am assuming that you will put your files in the /var/www/html web root, but you may want to create a subdirectory like/var/www/html/dad/. In the end, you decide, Okay?
 
 Navigate to your web directory:
 
@@ -161,9 +160,9 @@ Open a web browser and navigate to the protected directory (e.g., http://yourser
 
 A login prompt should appear. Enter the username and password you created.
 
-This setup will protect your /var/www/html/admin directory with basic authentication, restricting access to authorized users only. Just to remind you, basic authentication transmits credentials in an encoded but not encrypted form, so it's best to use it in conjunction with SSL/TLS for enhanced security.
+This setup will protect your /var/www/html/admin directory with basic authentication, restricting access to authorized users only. To remind you, basic authentication transmits credentials in an encoded but not encrypted form, so it's best to use it in conjunction with SSL/TLS for enhanced security.
 
-Okay, that's it for now. If you need to connect with me, my deets are below.
+Okay, that's it for now. If you need to connect with me, I have for you my deets below.
 
 Enjoy
 
