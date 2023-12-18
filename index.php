@@ -1,12 +1,19 @@
 <?php
-// Error reporting and PHP settings
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 // Include the database configuration file
 require_once './config.php';
-$pdo = getDBConnection();
+
+// Check if PDO instance is created in config.php
+if (!isset($pdo) || !($pdo instanceof PDO)) {
+    die("Error: Database connection not initialized.");
+}
+
+// Set error handling for PDO
+try {
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Error: Database connection failed. " . $e->getMessage());
+}
+
 $successMessage = '';
 $errorMessage = '';
 $studentData = null;
@@ -16,10 +23,8 @@ $visitingPersonsQuery = "SELECT person_id, person_name FROM visiting_persons";
 $visitingPersonsResult = $pdo->query($visitingPersonsQuery);
 
 $visitingPersons = [];
-if (mysqli_num_rows($visitingPersonsResult) > 0) {
-    while ($row = $visitingPersonsResult->fetch_assoc()) {
-        $visitingPersons[] = $row;
-    }
+while ($row = $visitingPersonsResult->fetch(PDO::FETCH_ASSOC)) {
+    $visitingPersons[] = $row;
 }
 
 // Fetch reasons for visit
@@ -27,10 +32,8 @@ $reasonsQuery = "SELECT reason_id, reason_description FROM visit_reasons";
 $reasonsResult = $pdo->query($reasonsQuery);
 
 $visitReasons = [];
-if (mysqli_num_rows($reasonsResult) > 0) {
-    while ($row = $reasonsResult->fetch_assoc()) {
-        $visitReasons[] = $row;
-    }
+while ($row = $reasonsResult->fetch(PDO::FETCH_ASSOC)) {
+    $visitReasons[] = $row;
 }
 
 // Handle Check-In
@@ -103,6 +106,7 @@ if (isset($_POST['checkout'])) {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
