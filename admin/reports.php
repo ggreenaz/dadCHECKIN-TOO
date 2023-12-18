@@ -1,13 +1,15 @@
 <?php
 // Include the database configuration file (assuming it's in the admin directory)
-require_once '../config.php';
+require_once '../config.php';  // Adjust the path if needed
 
-// Establish a database connection (assuming you have a $pdo connection)
+// Establish a database connection
 try {
     // Include your database connection code here
     // Example:
     // $pdo = new PDO("mysql:host=localhost;dbname=your_database_name", "your_username", "your_password");
     // $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = new PDO("mysql:host=localhost;dbname=dblgiqjqmf8xh5", "u5qyyg6q4wy1z", "Jxg8dc$$");
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Error: Database connection failed. " . $e->getMessage());
 }
@@ -32,6 +34,7 @@ try {
 
 // Function to fetch records with prepared statements
 function fetchRecords($conn, $condition = '', $params = []) {
+    // Define your SQL query for fetching records
     $sql = "SELECT users.first_name, users.last_name, checkin_checkout.checkin_time, checkin_checkout.checkout_time,
             visiting_persons.person_name AS person_visited,
             visit_reasons.reason_description AS reason
@@ -57,23 +60,6 @@ function fetchRecords($conn, $condition = '', $params = []) {
     return $records;
 }
 
-// Fetch records based on user actions
-if (isset($_POST['report_today'])) {
-    $today = date('Y-m-d');
-    $records = fetchRecords($pdo, "WHERE DATE(checkin_checkout.checkin_time) = ?", [$today]);
-} elseif (isset($_POST['get_report'])) {
-    $selected_month = $_POST['month'];
-    $selected_year = $_POST['year'];
-
-    $start_date = sprintf('%04d-%02d-01', $selected_year, $selected_month);
-    $end_date = date('Y-m-t', strtotime($start_date));
-
-    $records = fetchRecords($pdo, "WHERE DATE(checkin_checkout.checkin_time) BETWEEN ? AND ?", [$start_date, $end_date]);
-} elseif (isset($_POST['search_submit']) && !empty($_POST['search'])) {
-    $search_query = '%' . $_POST['search'] . '%';
-    $records = fetchRecords($pdo, "WHERE CONCAT(users.first_name, ' ', users.last_name) LIKE ?", [$search_query]);
-}
-
 // CSV generation function
 function generateCSV($records) {
     $delimiter = ",";
@@ -92,6 +78,8 @@ function generateCSV($records) {
     return $csvContent;
 }
 
+// ... Rest of the code for processing and handling CSV download requests ...
+
 // Handle CSV download request
 if (isset($_POST['download_report']) && !empty($records)) {
     $csvContent = generateCSV($records);
@@ -101,6 +89,8 @@ if (isset($_POST['download_report']) && !empty($records)) {
     exit;
 }
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
