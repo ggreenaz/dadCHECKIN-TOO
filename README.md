@@ -25,16 +25,16 @@ Ideal For:
     People who appreciate dad-level simplicity (and dad jokes!).
 
 Remember, in the world of overly complicated software, dadCHECKIN-TOO is your oasis of simplicity. It's the tool that proudly proclaims, "So easy, even a dad can use it!" And if you chuckle at that, you're exactly who we made this for!
-👨‍💼 Join the dadCHECKIN revolution – where simplicity meets functionality, and dad jokes are always welcome!
+👨‍💼 Join the dadCHECKIN-TOO revolution – where simplicity meets functionality, and dad jokes are always welcome!
 
 
 // Install Directions //
 
 Let's get started.
 
-Upload the latest version of dadCHECKIN to your web server's root directory. Be sure to set your directory privileges so your web servers has acess. For example:
+Upload the latest version of dadCHECKIN-TOO to your web server's root directory. Be sure to set your directory privileges so your web servers has acess. For example:
 
-    chown -R www-data:www-data /path/to/dadCHECKIN 
+    chown -R www-data:www-data /path/to/dadCHECKIN-TOO 
 
 If  you are new to the process of setting permissions on directories, read the short description below. If you are a SaltyDog, move on.
 On an Ubuntu Linux web server, the recommended file permissions for the /var/www/html directory, which typically contains web content, are as follows:
@@ -84,7 +84,7 @@ You will need to populate your database with the desired information for your dr
 
 Add your data to the database.
 
-In future distributions of dadCHECKIN I plan to add the authentication to protect your admin/ directory, but that will come a bit later, unless you want to do that work and contribute. Love to have. In the meantime, we are going to do this with a simple, and yes, I know, unsophisticated, use of the .htacces process.  
+In future distributions of dadCHECKIN-TOO I plan to add the authentication to protect your admin/ directory, but that will come a bit later, unless you want to do that work and contribute. Love to have. In the meantime, we are going to do this with a simple, and yes, I know, unsophisticated, use of the .htacces process.  
 
 The primary reason for using .htaccess for basic authentication is to add a layer of security to your web directories. By requiring a username and password, you can restrict access to your admin/ directory.
 
