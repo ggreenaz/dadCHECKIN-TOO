@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 
 // Include the database configuration file
 require_once './config.php';
-
+$pdo = getDBConnection();
 $successMessage = '';
 $errorMessage = '';
 $studentData = null;
@@ -16,8 +16,8 @@ $visitingPersonsQuery = "SELECT person_id, person_name FROM visiting_persons";
 $visitingPersonsResult = $pdo->query($visitingPersonsQuery);
 
 $visitingPersons = [];
-if ($visitingPersonsResult->rowCount() > 0) {
-    while ($row = $visitingPersonsResult->fetch()) {
+if (mysqli_num_rows($visitingPersonsResult) > 0) {
+    while ($row = $visitingPersonsResult->fetch_assoc()) {
         $visitingPersons[] = $row;
     }
 }
@@ -27,8 +27,8 @@ $reasonsQuery = "SELECT reason_id, reason_description FROM visit_reasons";
 $reasonsResult = $pdo->query($reasonsQuery);
 
 $visitReasons = [];
-if ($reasonsResult->rowCount() > 0) {
-    while ($row = $reasonsResult->fetch()) {
+if (mysqli_num_rows($reasonsResult) > 0) {
+    while ($row = $reasonsResult->fetch_assoc()) {
         $visitReasons[] = $row;
     }
 }
