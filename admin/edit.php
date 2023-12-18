@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute();
 
         // Redirect the user back to the list of visitors
-        header("Location: your_page.php");
+        header("Location: edit.php");
         exit(); // Make sure to exit after the header redirect
     } elseif (isset($_POST['checkout_now']) && $id) {
         $current_time = date('Y-m-d H:i:s');
@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute();
 
         // Redirect the user back to the list of visitors
-        header("Location: your_page.php");
+        header("Location: edit.php");
         exit(); // Make sure to exit after the header redirect
     }
 }
