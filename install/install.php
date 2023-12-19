@@ -3,7 +3,6 @@
 <head>
     <title>Database Installation</title>
     <link rel="stylesheet" type="text/css" href="../theme.php">
-    <link rel="stylesheet" type="text/css" href="../../css/style.css">
     <style>
         table {
             width: 60%;
