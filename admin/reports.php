@@ -3,15 +3,18 @@
 require_once '../config.php';  // Adjust the path if needed
 
 // Establish a database connection
+<?php
+// Include the database configuration file (assuming it's in the admin directory)
+require_once '../config.php';  // Adjust the path if needed
+
+
+// Establish a database connection
+
 try {
-    // Include your database connection code here
-    // Example:
-    // $pdo = new PDO("mysql:host=localhost;dbname=your_database_name", "your_username", "your_password");
-    // $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo = new PDO("mysql:host=localhost;dbname=dblgiqjqmf8xh5", "u5qyyg6q4wy1z", "Jxg8dc$$");
+    $pdo = new PDO("mysql:host={$db_host};dbname={$db_name}", $db_user, $db_password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    die("Error: Database connection failed. " . $e->getMessage());
+    echo 'Connection failed: ' . $e->getMessage();
 }
 
 // Fetch the list of checked-in visitors along with the person visited and the reason
