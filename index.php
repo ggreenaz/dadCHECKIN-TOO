@@ -179,7 +179,7 @@ if (isset($_POST['checkout'])) {
         <table class="centered-table edit-table" border="1">
             <tr>
                 <td><label for="email_prefix">Email Prefix: (i.e. bart) </label></td>
-                <td><input type="text" name="email_prefix" id="email_prefix" placeholder="Email Prefix" required>@k12.stgrsd.org</td>
+                <td><input type="text" name="email_prefix" id="email_prefix" placeholder="Email Prefix" required>@your.company.org</td>
             </tr>
             <tr>
                 <td><label for="name">Visiting (Name):</label></td>
@@ -220,7 +220,7 @@ if (isset($_POST['checkout'])) {
         <table class="centered-table edit-table" border="1">
             <tr>
                 <td><label for="email_prefix_out">Email Prefix (for Check-Out): (i.e. bart) </label></td>
-                <td><input type="text" name="email_prefix_out" id="email_prefix_out" placeholder="Email Prefix" required>@k12.stgrsd.org</td>
+                <td><input type="text" name="email_prefix_out" id="email_prefix_out" placeholder="Email Prefix" required>@your.company.org</td>
             </tr>
             <tr>
                 <td colspan="2"><center>
