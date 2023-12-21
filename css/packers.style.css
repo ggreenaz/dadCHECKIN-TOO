@@ -1,36 +1,33 @@
-/* Packers Theme with White Text and Borders */
+/* Mustard and Sage Theme with Forest Green Highlights */
 body {
     font-family: Arial, sans-serif;
-    background-color: #203731; /* Dark green background */
+    background-color: #CBD18F; /* Sage background */
     padding: 20px;
     text-align: center;
-    color: white; /* White text color */
+    color: #3A6B35; /* Forest Green text color */
 }
 
 .edit-form table {
     margin: auto;
-    background-color: #FFB612; /* Gold background for tables */
+    background-color: #E3B448; /* Mustard background */
     padding: 10px;
     border-radius: 5px;
 }
 
 .edit-form td {
     padding: 5px;
-    color: #FFB612; /* Black text color for table data */
 }
 
-.edit-form input[type="text"],
-.edit-form input[type="submit"] {
+.edit-form input[type="text"], .edit-form input[type="submit"] {
     padding: 5px;
     border-radius: 3px;
-    border: 2px solid white; /* White border for input fields */
-    color: white; /* White text color */
+    border: 1px solid #ddd;
 }
 
 .edit-form input[type="submit"] {
-    background-color: #203731; /* Dark green submit button */
-    color: #FFB612; /* Gold text on submit button */
-    border: 2px solid white; /* White border for submit button */
+    background-color: #3A6B35; /* Forest Green submit button */
+    color: white;
+    border: none;
     padding: 10px 20px;
     margin: 5px;
     border-radius: 5px;
@@ -39,7 +36,7 @@ body {
 }
 
 .edit-form input[type="submit"]:hover {
-    background-color: #1a2c21; /* Slightly darker green on hover */
+    background-color: #2C5230; /* Darker Forest Green on hover */
 }
 
 table {
@@ -48,58 +45,52 @@ table {
     border-collapse: collapse;
 }
 
-th {
+th, td {
     padding: 10px;
-    border: 1px solid #FFB612; /* Gold border for table headers */
+    border: 1px solid #ddd;
     text-align: left;
-    background-color: #203731; /* Dark green background for table headers */
-    color: white; /* White text color for table headers */
+    background-color: #E3B448; /* Mustard background for table rows */
 }
 
-td {
-    padding: 10px;
-    border: 1px solid #FFB612; /* Gold border for table cells */
-    text-align: left;
-    background-color: #FFB612; /* Gold background for table rows */
-    color: black; /* Black text color for table data */
+th {
+    background-color: #CBD18F; /* Sage background for table headers */
 }
 
 form button {
-    background-color: #203731; /* Dark green button */
-    color: #FFB612; /* Gold text on buttons */
-    border: 2px solid white; /* White border for buttons */
+    background-color: #3A6B35; /* Forest Green button */
+    color: white;
+    border: none;
     padding: 5px 10px;
     margin: 2px;
-    border-radius: 5px;
+    border-radius: 3px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
 form button:hover {
-    background-color: #1a2c21; /* Slightly darker green on hover */
+    background-color: #2C5230; /* Darker Forest Green on hover */
 }
 
 .button, a {
     display: inline-block;
-    background-color: #203731; /* Dark green button */
+    background-color: #3A6B35; /* Forest Green button */
     padding: 10px 20px;
     margin: 10px;
-    border: 2px solid white; /* White border for buttons */
     border-radius: 5px;
-    color: #FFB612; /* Gold text on buttons */
+    color: white;
     text-decoration: none;
     transition: background-color 0.3s;
 }
 
 .button:hover, a:hover {
-    background-color: #1a2c21; /* Slightly darker green on hover */
+    background-color: #2C5230; /* Darker Forest Green on hover */
 }
 
 /* Red delete button styling */
 .delete-button {
     background-color: red;
     color: white;
-    border: 2px solid white; /* White border for delete button */
+    border: none;
     padding: 5px 10px;
     cursor: pointer;
     transition: background-color 0.3s;
@@ -112,7 +103,7 @@ form button:hover {
 .red-button {
     background-color: red; /* Red background */
     color: white;         /* White text */
-    border: 2px solid white; /* White border for red button */
+    border: none;         /* No border */
     padding: 10px 20px;   /* Padding around the text */
     border-radius: 5px;   /* Rounded corners */
     cursor: pointer;      /* Cursor changes to pointer on hover */
@@ -124,7 +115,17 @@ form button:hover {
     width: 100%; /* Set the table width */
     table-layout: fixed; /* Fixed table layout for consistent column widths */
     margin: auto; /* Center align the table */
-}/* Existing styles... */
+}
+/* Style for table headers */
+.centered-table th {
+    width: 50%; /* Adjust the width as needed */
+}
+
+/* Style for table data cells */
+.centered-table td {
+    width: 50%; /* Adjust the width as needed */
+}
+/* Existing styles... */
 
 /* Styles for Chart Containers */
 .chart-container {
@@ -140,6 +141,3 @@ canvas {
 }
 
 /* You might want to add additional styling specific to your charts here */
-
-
-
