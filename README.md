@@ -81,6 +81,48 @@ You will need to populate your database with the desired information for your dr
 
 Add your data to the database.
 
+IF YOU WANT TO USE LDAP/Active Directory Connection: 
+
+You can use the LDAP/Active Directory configuration script or use the example below by configuring this manually.  You have a setup page called settings.php, where you need to enter all your data to have the ldap.config.php file created. In that file, you will need to fill out the information below:
+    
+    <?php
+    return array (
+      'ldap_server' => 'ldap://192.168.1.10',
+      'ldap_user' => 'ldapsearch@youdomain.org',
+      'ldap_password' => 'ldap_pass',
+      'version' => '3',
+      'use_tls' => false,
+      'user_type' => 'ActiveDirectory',
+      'search_subcontexts' => true,
+      'dereference_aliases' => true,
+      'user_attribute' => 'samaccountname',
+      'base_dn' => 'cn=ldapuser,ou=public,o=org',
+    );
+    ?>
+
+On you are done, you will need to set a cron job 
+
+    0 0 * * * /usr/bin/php /path/to/ldap_sync.php
+
+In most cases, if you are on a Linux server, it would be 
+
+    0 0 * * * /usr/bin/php /var/www/html/admin/ldap_sync.php
+
+Once you have filled out the settings.php credentials, you will redirected to the  update_ldap_settings.php page, where you can test your connection. 
+
+For the first time, many people will populate their database by running a CLI command: 
+
+    php ./ldap_sync.php > /var/log/ldap_sync.log 2>&1 &
+
+This assumes you want to get the logs of your output sent to ldap_sync.log. That file needs to be created manually before that. This script will not do that automatically. 
+
+Once you confirm that your server is bound to your Active Directory, you should delete the entire contents of
+
+    /install/
+    update_ldap_settings.php
+
+Directories and either change the permissions on the update_ldap_settings.php file or delete it thoroughly to ensure the user maintains the security of you installation. 
+
 In future distributions of dadCHECKIN-TOO, I plan to add the authentication to protect your admin/ directory, but that will come a bit later unless you want to do that work and contribute. Love to have. In the meantime, we are going to do this with a simple, and yes, I know, unsophisticated, use of the .htacces process.  
 
 The primary reason for using .htaccess for basic authentication is to add a layer of security to your web directories. By requiring a username and password, you can restrict access to your admin/ directory.
