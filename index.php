@@ -55,7 +55,6 @@ if (isset($_POST['checkin'])) {
         // Insert the new visitor into the checkin_checkout table
         $insertStmt = $pdo->prepare("INSERT INTO checkin_checkout (user_id, visiting_person_id, visit_reason_id, checkin_time) VALUES (?, ?, ?, ?)");
         $insertStmt->execute([$user_id, $visiting_person_id, $visit_reason_id, $checkin_time]);
-
         if ($insertStmt->rowCount() > 0) {
             $successMessage = "Visitor checked in successfully!";
         } else {
@@ -107,7 +106,6 @@ if (isset($_POST['checkout'])) {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -116,6 +114,7 @@ if (isset($_POST['checkout'])) {
     <style>
         /* Center-align the edit tables */
         table.edit-table {
+
             width: 55%;
             margin: 0 auto;
         }
@@ -138,11 +137,32 @@ if (isset($_POST['checkout'])) {
         table.existing-table .actions {
             width: 150px;
         }
+
+        table {
+            margin: 0 auto; /* Center horizontally */
+        }
     </style>
 </head>
 <body>
-    <img src="./img/dnd-project-sm-logo.png">
-    <h1>Visitor Check-In and Check-Out</h1>
+    <!-- Display Student Data after Check-In -->
+    <?php if ($studentData): ?>
+        <h2>User Information</h2>
+        <a href="./" class="delete-button">Click here to finish registration</a>
+        <table border="1" style="width: 60%; margin: 0 auto;">
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <!-- Add other necessary columns -->
+            </tr>
+            <tr>
+                <td><?= htmlspecialchars($studentData['first_name']) ?></td>
+                <td><?= htmlspecialchars($studentData['last_name']) ?></td>
+                <td><?= htmlspecialchars($studentData['email']) ?></td>
+                <!-- Display other student data -->
+            </tr>
+        </table>
+    <?php endif; ?>
 
     <!-- Display Success and Error Messages -->
     <?php if (!empty($successMessage)): ?>
@@ -153,11 +173,13 @@ if (isset($_POST['checkout'])) {
     <?php endif; ?>
 
     <!-- Form for Visitor Check-In -->
+    <img src="./img/dnd-project-sm-logo.png">
+    <h1>Visitor Check-In and Check-Out</h1>
     <form method="POST" action="">
         <table class="centered-table edit-table" border="1">
             <tr>
-                <td><label for="email_prefix">Email Prefix:</label></td>
-                <td><input type="text" name="email_prefix" id="email_prefix" placeholder="Email Prefix" required>@yourcompany.com</td>
+                <td><label for="email_prefix">Email Prefix: (i.e. bart) </label></td>
+                <td><input type="text" name="email_prefix" id="email_prefix" placeholder="Email Prefix" required>@k12.stgrsd.org</td>
             </tr>
             <tr>
                 <td><label for="name">Visiting (Name):</label></td>
@@ -197,9 +219,8 @@ if (isset($_POST['checkout'])) {
     <form method="POST" action="">
         <table class="centered-table edit-table" border="1">
             <tr>
-                <td><label for="email_prefix_out">Email Prefix (for Check-Out):</label></td>
-                <td><input type="text" name="email_prefix_out" id="email_prefix_out" placeholder="Email Prefix" required>@yourcompany.com</td>
-            <p><tr><h2>Check-out Below</h2></tr><p>
+                <td><label for="email_prefix_out">Email Prefix (for Check-Out): (i.e. bart) </label></td>
+                <td><input type="text" name="email_prefix_out" id="email_prefix_out" placeholder="Email Prefix" required>@k12.stgrsd.org</td>
             </tr>
             <tr>
                 <td colspan="2"><center>
@@ -208,25 +229,5 @@ if (isset($_POST['checkout'])) {
             </tr>
         </table>
     </form>
-
-    <!-- Display Student Data after Check-In -->
-    <?php if ($studentData): ?>
-        <h2>Student Information</h2>
-        <a href="./" class="delete-button">Click here to finish registration</a>
-        <table border="1" style="width: 60%; margin: 0 auto;">
-            <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <!-- Add other necessary columns -->
-            </tr>
-            <tr>
-                <td><?= htmlspecialchars($studentData['first_name']) ?></td>
-                <td><?= htmlspecialchars($studentData['last_name']) ?></td>
-                <td><?= htmlspecialchars($studentData['email']) ?></td>
-                <!-- Display other student data -->
-            </tr>
-        </table>
-    <?php endif; ?>
 </body>
 </html>
