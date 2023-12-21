@@ -116,12 +116,16 @@ For the first time, many people will populate their database by running a CLI co
 
 This assumes you want to get the logs of your output sent to ldap_sync.log. That file needs to be created manually before that. This script will not do that automatically. 
 
-Once you confirm that your server is bound to your Active Directory, you should delete the entire contents of
+Once you confirm that your server is bound to your Active Directory, you should delete the entire contents of directories and either change the permissions on the update_ldap_settings.php file or delete it thoroughly to ensure the user maintains the security of your installation. 
 
     /install/
     update_ldap_settings.php
 
-Directories and either change the permissions on the update_ldap_settings.php file or delete it thoroughly to ensure the user maintains the security of you installation. 
+
+MANUALLY UPLOAD Data
+
+There is an example CSV template for you to use to fill in the user information you will need. Be sure to save your CSV file using UTF8. Once you have uploaded your data you will be able to use dadCHECKIN-TOO. 
+
 
 In future distributions of dadCHECKIN-TOO, I plan to add the authentication to protect your admin/ directory, but that will come a bit later unless you want to do that work and contribute. Love to have. In the meantime, we are going to do this with a simple, and yes, I know, unsophisticated, use of the .htacces process.  
 
