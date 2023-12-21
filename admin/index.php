@@ -79,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['theme'])) {
         <a href="admin.php">Add or Edit Person/Reason</a>
         <a href="history.php">Visitor History Data</a>
         <a href="upload.php">Upload Data</a>
+        <a href="settings.php">Connect to LDAP</a>
     </div>
 
     <form method="post" action="">
