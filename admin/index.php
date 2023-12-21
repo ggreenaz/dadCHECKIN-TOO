@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['theme'])) {
     $selectedTheme = $_POST['theme'];
 
     // Validate the selected theme (ensure it exists to prevent vulnerabilities)
-    $allowedThemes = ['style1', 'darkmode', 'lightmode', 'ltgreen', 'academi', 'gator', 'packers', 'trc'];
+    $allowedThemes = ['style1', 'darkmode', 'lightmode', 'ltgreen', 'academi', 'gator', 'packers', 'trc','madison'];
 
     if (in_array($selectedTheme, $allowedThemes)) {
         // Set a session variable with the same key as in JavaScript
@@ -48,30 +48,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['theme'])) {
             width: 150px;
         }
     </style>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const themeSelect = document.getElementById("theme-select");
-        const storedTheme = localStorage.getItem("selected_theme");
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const themeSelect = document.getElementById("theme-select");
+            const storedTheme = localStorage.getItem("selected_theme");
 
-        // Set the dropdown to the stored theme
-        if (storedTheme) {
-            themeSelect.value = storedTheme;
-        }
+            // Set the dropdown to the stored theme
+            if (storedTheme) {
+                themeSelect.value = storedTheme;
+            }
 
-        themeSelect.addEventListener("change", function () {
-            const selectedTheme = this.value;
-            localStorage.setItem("selected_theme", selectedTheme);
-            document.getElementById("theme-link").href = `../css/${selectedTheme}.css`;
+            themeSelect.addEventListener("change", function () {
+                const selectedTheme = this.value;
+                localStorage.setItem("selected_theme", selectedTheme);
+                document.getElementById("theme-link").href = `../css/${selectedTheme}.css`;
+            });
         });
-    });
-</script>
-
+    </script>
 </head>
 <body>
     <center>
         <img src="../img/dnd-project-sm-logo.png">
     </center>
 
+    <!-- Confirmation Table -->
+    <?php if ($studentData): ?>
+        <h2>User Information</h2>
+        <a href="./" class="delete-button">Click here to finish registration</a>
+        <table border="1" style="width: 60%; margin: 0 auto;">
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <!-- Add other necessary columns -->
+            </tr>
+            <tr>
+                <td><?= htmlspecialchars($studentData['first_name']) ?></td>
+                <td><?= htmlspecialchars($studentData['last_name']) ?></td>
+                <td><?= htmlspecialchars($studentData['email']) ?></td>
+                <!-- Display other student data -->
+            </tr>
+        </table>
+    <?php endif; ?>
+
+    <!-- Rest of the content goes here -->
     <div class="container">
         <h1>Admin Dashboard</h1>
         <a href="reports.php">Print Records</a>
@@ -93,6 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['theme'])) {
             <option value="gator">Gator Mode</option>
             <option value="packers">Green Bay Mode</option>
             <option value="trc">TRC Mode</option>
+            <option value="madison">Madison Mode</option>
             <!-- Add more options for additional themes -->
         </select>
         <input type="submit" value="Apply Theme">
