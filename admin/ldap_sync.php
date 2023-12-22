@@ -86,4 +86,3 @@ if ($ldapUsers) {
 }
 logMessage("LDAP Sync Script", "Script completed.");
 ?>
-
