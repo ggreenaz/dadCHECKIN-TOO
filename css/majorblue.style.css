@@ -1,0 +1,122 @@
+/* Custom Theme with Dark Blue, Off White, Orange, and Yellow */ body {
+    font-family: Arial, sans-serif;
+    background-color: #F5F0E1; /* Off White background */
+    padding: 20px;
+    text-align: center;
+    color: #1E3D59; /* Dark Blue text color */
+}
+.edit-form table {
+    margin: auto;
+    background-color: #FFC13B; /* Yellow background */
+    padding: 10px;
+    border-radius: 5px;
+    color: #1E3D59; /* Dark Blue text color */
+}
+.edit-form td {
+    padding: 5px;
+}
+.edit-form input[type="text"], .edit-form input[type="submit"] {
+    padding: 5px;
+    border-radius: 3px;
+    border: 1px solid #1E3D59;
+}
+.edit-form input[type="submit"] {
+    background-color: #FF6E40; /* Orange submit button */
+    color: #F5F0E1;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.edit-form input[type="submit"]:hover {
+    background-color: #D45A2C; /* Darker Orange on hover */
+}
+table {
+    margin-top: 20px;
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #FFC13B; /* Yellow background */
+}
+th, td {
+    padding: 10px;
+    border: 1px solid #1E3D59;
+    text-align: left;
+    background-color: #F5F0E1; /* Off White background for table rows */
+    color: #1E3D59; /* Dark Blue text color */
+}
+th {
+    background-color: #1E3D59; /* Dark Blue background for table headers */
+    color: #F5F0E1;
+}
+form button {
+    background-color: #FF6E40; /* Orange button */
+    color: #F5F0E1;
+    border: none;
+    padding: 5px 10px;
+    margin: 2px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+form button:hover {
+    background-color: #D45A2C; /* Darker Orange on hover */
+}
+.button, a {
+    display: inline-block;
+    background-color: #1E3D59; /* Dark Blue button */
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    color: #F5F0E1;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+.button:hover, a:hover {
+    background-color: #16334A; /* Darker Blue on hover */
+}
+/* Red delete button styling */ .delete-button {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.delete-button:hover {
+    background-color: darkred;
+}
+.red-button {
+    background-color: red; /* Red background */
+    color: white; /* White text */
+    border: none; /* No border */
+    padding: 10px 20px; /* Padding around the text */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Cursor changes to pointer on hover */
+    /* Add any other styles you need */
+}
+/* Style for tables */ .centered-table {
+    width: 100%; /* Set the table width */
+    table-layout: fixed; /* Fixed table layout for consistent column widths */
+    margin: auto; /* Center align the table */
+    background-color: #FFC13B; /* Yellow background for centered tables */
+}
+/* Style for table headers */ .centered-table th {
+    background-color: #1E3D59; /* Dark Blue background for centered table headers */
+    color: #F5F0E1;
+}
+/* Style for table data cells */ .centered-table td {
+    width: 50%; /* Adjust the width as needed */
+}
+/* Existing styles... */ /* Styles for Chart Containers */ .chart-container {
+    width: 600px; /* Adjust the width as needed */
+    height: 400px; /* Adjust the height as needed */
+    margin: auto; /* Center the chart on the page */
+    margin-top: 20px; /* Space above the chart container */
+}
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+/* Additional styling specific to your needs... */
