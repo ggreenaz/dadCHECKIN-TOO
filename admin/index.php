@@ -6,15 +6,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['theme'])) {
     // Get the selected theme from the form
     $selectedTheme = $_POST['theme'];
 
-    // Validate the selected theme (ensure it exists to prevent vulnerabilities)
-    $allowedThemes = ['style1', 'darkmode', 'lightmode', 'ltgreen', 'academi', 'gator', 'packers', 'trc','madison'];
+    // Define the allowed themes
+    $allowedThemes = [
+        'style' => 'style.css.default',
+        'darkmode' => 'darkmode.style.css.default',
+        'lightmode' => 'lightmode.style.css',
+        'ltgreen' => 'ltgreen.style.css',
+        'academi' => 'academi.style.css',
+        'gator' => 'gator.style.css',
+        'packers' => 'packers.style.css',
+        'olive' => 'olive.style.css',
+        'raspberry' => 'raspberry.style.css',
+        'trc' => 'trc.style.css',
+        'blueshades' => 'blueshades.style.css',
+        'royalblue' => 'royalblue.style.css',
+        'teal' => 'teal.style.css',
+        'red' => 'red.style.css',
+        'limegreen' => 'limegreen.style.css',
+        'majorblue' => 'majorblue.style.css',
+        'yellow-charcoal' => 'yellow-charcoal.style.css'
+        // Add any additional themes here
+    ];
 
-    if (in_array($selectedTheme, $allowedThemes)) {
-        // Set a session variable with the same key as in JavaScript
+    // Validate the selected theme
+    if (array_key_exists($selectedTheme, $allowedThemes)) {
         $_SESSION['selected_theme'] = $selectedTheme;
     }
 }
-?>
+ ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -23,14 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['theme'])) {
     <title>Admin Dashboard</title>
     <link rel="stylesheet" type="text/css" href="theme.php">
     <style>
-        /* Center-align the edit tables */
-        table.edit-table {
-            width: 40%;
-            margin: 0 auto;
-        }
 
-        /* Adjust table styles for existing visiting persons and visit reasons */
-        table.existing-table {
+       table.existing-table {
             width: 50%; /* Set both tables to be 50% of the page */
             border-collapse: collapse;
             margin: 0 auto; /* Center-align the tables */
@@ -42,7 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['theme'])) {
             padding: 8px;
             text-align: left;
         }
-
         /* Ensure uniform width for action buttons */
         table.existing-table .actions {
             width: 150px;
@@ -102,21 +115,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['theme'])) {
         <a href="settings.php">Connect to LDAP</a>
     </div>
 
-    <form method="post" action="">
-        <label for="theme-select">Select a theme:</label>
-        <select id="theme-select" name="theme">
-            <option value="style1">Default</option>
-            <option value="darkmode">Dark Mode</option>
-            <option value="lightmode">Light Mode</option>
-            <option value="ltgreen">Light Green Mode</option>
-            <option value="academi">Academi Mode</option>
-            <option value="gator">Gator Mode</option>
-            <option value="packers">Green Bay Mode</option>
-            <option value="trc">TRC Mode</option>
-            <option value="madison">Madison Mode</option>
-            <!-- Add more options for additional themes -->
-        </select>
-        <input type="submit" value="Apply Theme">
-    </form>
+<form method="post" action="">
+    <label for="theme-select">Select a theme:</label>
+    <select id="theme-select" name="theme">
+        <option value="style">Default</option>
+        <option value="darkmode">Dark Mode</option>
+        <option value="lightmode">Light Mode</option>
+        <option value="ltgreen">Light Green Mode</option>
+        <option value="academi">Academi Mode</option>
+        <option value="gator">Gator Mode</option>
+        <option value="packers">Green Bay Mode</option>
+        <option value="olive">Olive Mode</option>
+        <option value="raspberry">Raspberry Mode</option>
+        <option value="trc">TRC Mode</option>
+        <option value="blueshades">Blue Shades Mode</option>
+        <option value="royalblue">Royal Blue Mode</option>
+        <option value="teal">Teal Mode</option>
+        <option value="red">Red Mode</option>
+        <option value="limegreen">Lime Green Mode</option>
+        <option value="majorblue">Major Blue Mode</option>
+        <option value="yellow-charcoal">Yellow Charcoal Mode</option>
+        <!-- Add more options for additional themes -->
+    </select>
+    <input type="submit" value="Apply Theme">
+</form>
 </body>
 </html>
