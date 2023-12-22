@@ -8,8 +8,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['theme'])) {
 
     // Define the allowed themes
     $allowedThemes = [
-        'style' => 'style.css.default',
-        'darkmode' => 'darkmode.style.css.default',
+        'style' => 'style.css',
+        'darkmode' => 'darkmode.style.css',
         'lightmode' => 'lightmode.style.css',
         'ltgreen' => 'ltgreen.style.css',
         'academi' => 'academi.style.css',
