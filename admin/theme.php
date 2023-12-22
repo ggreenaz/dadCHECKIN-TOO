@@ -12,8 +12,8 @@ $selectedTheme = isset($_SESSION['selected_theme']) ? $_SESSION['selected_theme'
 
 
 $allowedThemes = [
-    'style' => 'style.css.default',
-    'darkmode' => 'darkmode.style.css.default',
+    'style' => 'style.css',
+    'darkmode' => 'darkmode.style.css',
     'lightmode' => 'lightmode.style.css',
     'ltgreen' => 'ltgreen.style.css',
     'olive' => 'olive.style.css',
