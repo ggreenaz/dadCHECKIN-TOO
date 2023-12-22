@@ -1,3 +1,4 @@
+
 <?php
 session_start(); // Start the session
 
@@ -8,14 +9,27 @@ $defaultTheme = 'style'; // Change this to your desired default theme
 $selectedTheme = isset($_SESSION['selected_theme']) ? $_SESSION['selected_theme'] : $defaultTheme;
 
 // Define an array of allowed themes to prevent vulnerabilities
+
+
 $allowedThemes = [
-    'style' => 'style.css',
-    'darkmode' => 'darkmode.style.css',
+    'style' => 'style.css.default',
+    'darkmode' => 'darkmode.style.css.default',
     'lightmode' => 'lightmode.style.css',
     'ltgreen' => 'ltgreen.style.css',
-    'academi' => 'academi.style.css',
+    'olive' => 'olive.style.css',
+    'raspberry' => 'raspberry.style.css',
+    'trc' => 'trc.style.css',
+    'blueshades' => 'blueshades.style.css',
     'gator' => 'gator.style.css',
-    'packers' => 'packers.style.css'
+    'packers' => 'packers.style.css',
+    'royalblue' => 'royalblue.style.css',
+    'teal' => 'teal.style.css',
+    'red' => 'red.style.css',
+    'limegreen' => 'limegreen.style.css',
+    'majorblue' => 'majorblue.style.css',
+    'yellow-charcoal' => 'yellow-charcoal.style.css',
+    'academi' => 'academi.style.css',
+    // Add any additional themes here
 ];
 
 // Ensure the selected theme is valid; otherwise, fallback to default
@@ -33,4 +47,3 @@ header('Content-Type: text/css');
 // Output the CSS file content
 readfile($cssFilePath);
 ?>
-	
