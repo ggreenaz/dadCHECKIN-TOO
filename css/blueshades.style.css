@@ -1,0 +1,122 @@
+/* Custom Theme with Turquoise, Deep Teal, Ocean Blue, and Midnight Blue */ body {
+    font-family: Arial, sans-serif;
+    background-color: #1978A5; /* Ocean Blue background */
+    padding: 20px;
+    text-align: center;
+    color: #FFFFFF; /* White text color */
+}
+.edit-form table {
+    margin: auto;
+    background-color: #05716C; /* Deep Teal background */
+    padding: 10px;
+    border-radius: 5px;
+    color: #FFFFFF; /* White text color */
+}
+.edit-form td {
+    padding: 5px;
+}
+.edit-form input[type="text"], .edit-form input[type="submit"] {
+    padding: 5px;
+    border-radius: 3px;
+    border: 1px solid #031163; /* Midnight Blue border */
+}
+.edit-form input[type="submit"] {
+    background-color: #1FBFB8; /* Turquoise submit button */
+    color: #ffffff; /* White text color */
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.edit-form input[type="submit"]:hover {
+    background-color: #17A598; /* Darker Turquoise on hover */
+}
+table {
+    margin-top: 20px;
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #05716C; /* Deep Teal background */
+}
+th, td {
+    padding: 10px;
+    border: 1px solid #031163; /* Midnight Blue border */
+    text-align: left;
+    background-color: #f5f0e1; /* Tan background for table rows */
+    color: #1e3d59; /* Turquoise text color for better readability */
+}
+th {
+    background-color: #031163; /* Midnight Blue background for table headers */
+    color: #FFFFFF; /* White text color */
+}
+form button {
+    background-color: #1FBFB8; /* Turquoise button */
+    color: #031163; /* Midnight Blue text color */
+    border: none;
+    padding: 5px 10px;
+    margin: 2px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+form button:hover {
+    background-color: #17A598; /* Darker Turquoise on hover */
+}
+.button, a {
+    display: inline-block;
+    background-color: #031163; /* Midnight Blue button */
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    color: #FFFFFF; /* White text */
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+.button:hover, a:hover {
+    background-color: #020C4B; /* Darker Midnight Blue on hover */
+}
+/* Red delete button styling */ .delete-button {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.delete-button:hover {
+    background-color: darkred;
+}
+.red-button {
+    background-color: red; /* Red background */
+    color: white; /* White text */
+    border: none; /* No border */
+    padding: 10px 20px; /* Padding around the text */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Cursor changes to pointer on hover */
+}
+/* Style for tables */ .centered-table {
+    width: 100%; /* Set the table width */
+    table-layout: fixed; /* Fixed table layout for consistent column widths */
+    margin: auto; /* Center align the table */
+    background-color: #05716C; /* Deep Teal background for centered tables */
+}
+/* Style for table headers */ .centered-table th {
+    background-color: #031163; /* Midnight Blue background for centered table headers */
+    color: #FFFFFF; /* White text color */
+}
+/* Style for table data cells */ .centered-table td {
+    background-color: #1978A5; /* Ocean Blue background for table rows */
+    color: #ffffff; /* Turquoise text color for better readability */
+}
+/* Styles for Chart Containers */ .chart-container {
+    width: 600px; /* Adjust the width as needed */
+    height: 400px; /* Adjust the height as needed */
+    margin: auto; /* Center the chart on the page */
+    margin-top: 20px; /* Space above the chart container */
+}
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+/* Additional styling specific to your needs... */
