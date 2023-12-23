@@ -1,6 +1,26 @@
 <?php
 session_start(); // Start the session
 
+// Handle image upload
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['customImage'])) {
+    $targetDirectory = "../img";
+    $targetFile = $targetDirectory . basename($_FILES["customImage"]["name"]);
+    $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+
+    // Check if image file is an actual image or fake image
+    $check = getimagesize($_FILES["customImage"]["tmp_name"]);
+    if ($check !== false) {
+        if (move_uploaded_file($_FILES["customImage"]["tmp_name"], $targetFile)) {
+            $_SESSION['uploaded_image'] = $targetFile;
+        } else {
+            echo "Sorry, there was an error uploading your file.";
+        }
+    } else {
+        echo "File is not an image.";
+    }
+}
+
+
 // Check if the form has been submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['theme'])) {
     // Get the selected theme from the form
@@ -80,8 +100,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['theme'])) {
     </script>
 </head>
 <body>
-    <center>
-        <img src="../img/dnd-project-sm-logo.png">
+
+        <?php
+        // Display the uploaded image if it exists
+        if (isset($_SESSION['uploaded_image'])) {
+            echo '<img src="' . $_SESSION['uploaded_image'] . '">';
+        } else {
+            echo '<img src="../img/dnd-project-sm-logo.png">';
+        }
+        ?>
     </center>
 
     <!-- Confirmation Table -->
@@ -114,7 +141,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['theme'])) {
         <a href="upload.php">Upload Data</a>
         <a href="settings.php">Connect to LDAP</a>
     </div>
-
+<p><p>
+    <!-- Image upload form -->
+    <form action="" method="post" enctype="multipart/form-data">
+        Upload Your Custom Logo:
+        <input type="file" name="customImage" id="customImage">
+        <input type="submit" value="Upload Image" name="submit">
+    </form>
+<P><P>
 <form method="post" action="">
     <label for="theme-select">Select a theme:</label>
     <select id="theme-select" name="theme">
