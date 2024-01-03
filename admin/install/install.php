@@ -15,10 +15,10 @@
     <h2>Database Installation</h2>
     <?php
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $servername = $_POST["servername"];
-        $username = $_POST["username"];
-        $password = $_POST["password"];
-        $dbname = $_POST["dbname"];
+        $servername = htmlspecialchars($_POST["servername"]);
+        $username = htmlspecialchars($_POST["username"]);
+        $password = htmlspecialchars($_POST["password"]);
+        $dbname = htmlspecialchars($_POST["dbname"]);
 
         // Create connection
         $conn = new mysqli($servername, $username, $password);
@@ -27,9 +27,10 @@
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         }
+        echo "Connected to the database server<br>";
 
         // Create database
-        $sql = "CREATE DATABASE IF NOT EXISTS $dbname";
+        $sql = "CREATE DATABASE IF NOT EXISTS " . $conn->real_escape_string($dbname);
         if ($conn->query($sql) === TRUE) {
             echo "Database created successfully<br>";
         } else {
@@ -86,14 +87,15 @@
         ];
 
         foreach ($tables as $sql) {
-            if ($conn->query($sql) === TRUE) {
-                echo "Table created successfully<br>";
-            } else {
+            if ($conn->query($sql) !== TRUE) {
                 echo "Error creating table: " . $conn->error . "<br>";
+            } else {
+                echo "Table created successfully<br>";
             }
         }
 
         $conn->close();
+        echo "Disconnected from the database server<br>";
 
         // Create config.php file with PDO setup
         $configFileContent = "<?php\n";
@@ -108,10 +110,8 @@
         file_put_contents('../../config.php', $configFileContent);
         echo "config.php file created successfully.<br>";
 
-        // Display the link to the admin dashboard after all operations are complete
         echo '<h2><a href="../" class="button">Return to Admin Dashboard</a></h2>';
         echo '<h2>Be sure to delete the install/install.php script for added security!</h2>';
-
     } else {
         ?>
         <form method="POST">
