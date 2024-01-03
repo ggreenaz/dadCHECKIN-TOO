@@ -1,5 +1,8 @@
 <?php
-require_once '../config.php';
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+require_once '../config.php';  // Make sure this path is correct
 $config = require_once './ldap.config.php';
 
 function logMessage($source, $message) {
@@ -9,7 +12,7 @@ function logMessage($source, $message) {
 }
 
 function fetchFromLDAP($config) {
-    logMessage("LDAP Fetch", "Fetching user data from LDAP.");
+    logMessage("LDAP Fetch", "Starting LDAP fetch process.");
     $ldapconn = ldap_connect($config['ldap_server']);
 
     if (!$ldapconn) {
@@ -19,7 +22,10 @@ function fetchFromLDAP($config) {
 
     ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);
     if (isset($config['use_tls']) && $config['use_tls']) {
-        ldap_start_tls($ldapconn);
+        if (!ldap_start_tls($ldapconn)) {
+            logMessage("LDAP Fetch", "Failed to start TLS.");
+            return false;
+        }
     }
 
     if (!ldap_bind($ldapconn, $config['ldap_user'], $config['ldap_password'])) {
@@ -35,7 +41,14 @@ function fetchFromLDAP($config) {
     $allEntries = array();
 
     do {
-        ldap_control_paged_result($ldapconn, $pageSize, true, $cookie);
+        $control = array(
+            array(
+                "oid" => LDAP_CONTROL_PAGEDRESULTS,
+                "value" => array("size" => $pageSize, "cookie" => $cookie)
+            )
+        );
+
+        ldap_set_option($ldapconn, LDAP_OPT_SERVER_CONTROLS, $control);
 
         $result = ldap_search($ldapconn, $config['base_dn'], $searchFilter, $justthese);
         if (!$result) {
@@ -50,39 +63,70 @@ function fetchFromLDAP($config) {
             }
         }
 
-        ldap_control_paged_result_response($ldapconn, $result, $cookie);
-    } while($cookie !== null && $cookie != '');
+        ldap_parse_result($ldapconn, $result, $errcode, $matcheddn, $errmsg, $referrals, $controls);
+        $cookie = $controls[LDAP_CONTROL_PAGEDRESULTS]['value']['cookie'] ?? '';
+
+    } while (!empty($cookie));
 
     ldap_unbind($ldapconn);
     logMessage("LDAP Fetch", "Fetched " . count($allEntries) . " entries from LDAP.");
+
+    if (count($allEntries) == 0) {
+        logMessage("LDAP Fetch", "No LDAP entries were fetched.");
+        return false;
+    }
+
     return $allEntries;
 }
 
-function syncUsers($users) {
-    global $pdo;  // Use the PDO instance from config.php
 
-    foreach ($users as $user) {
+function syncUsers($ldapUsers) {
+    $conn = getDBConnection(); // Get MySQLi connection from config.php
+
+    $sql = "INSERT INTO users (first_name, last_name, email) VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE first_name=?, last_name=?, email=?";
+
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        logMessage("Database Sync", "Prepare failed: " . $conn->error);
+        return;
+    }
+
+    foreach ($ldapUsers as $user) {
+        // Ensure these attribute names match your LDAP attributes
         $firstName = $user['givenname'][0] ?? null;
         $lastName = $user['sn'][0] ?? null;
         $email = $user['mail'][0] ?? null;
 
         if ($firstName && $lastName && $email) {
-            $sql = "INSERT INTO users (first_name, last_name, email) VALUES (:first_name, :last_name, :email)
-                    ON DUPLICATE KEY UPDATE first_name=:first_name, last_name=:last_name, email=:email";
-
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([':first_name' => $firstName, ':last_name' => $lastName, ':email' => $email]);
-            logMessage("Database Sync", "Synced user: " . $email);
+            $stmt->bind_param("ssssss", $firstName, $lastName, $email, $firstName, $lastName, $email);
+            if (!$stmt->execute()) {
+                logMessage("Database Sync", "Execute failed: " . $stmt->error);
+            } else {
+                logMessage("Database Sync", "Synced user: " . $email);
+            }
         } else {
-            logMessage("Database Sync", "Missing user information: " . json_encode($user));
+            logMessage("Database Sync", "Missing user information for a record, not synced.");
         }
     }
+
+    $stmt->close();
+    $conn->close();
 }
 
-logMessage("LDAP Sync Script", "Script started.");
+
+
+// Starting the script
+logMessage("Script Status", "Script started.");
+
+// Perform LDAP fetch
 $ldapUsers = fetchFromLDAP($config);
 if ($ldapUsers) {
     syncUsers($ldapUsers);
+} else {
+    logMessage("Script Status", "No LDAP users fetched or an error occurred.");
 }
-logMessage("LDAP Sync Script", "Script completed.");
+
+// Script completion
+logMessage("Script Status", "Script completed.");
 ?>
