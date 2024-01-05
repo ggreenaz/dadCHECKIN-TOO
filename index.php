@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+
 // Include the database configuration file
 require_once './config.php';
 
@@ -8,103 +12,97 @@ if (!isset($pdo) || !($pdo instanceof PDO)) {
 }
 
 // Set error handling for PDO
-try {
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Error: Database connection failed. " . $e->getMessage());
-}
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 $successMessage = '';
 $errorMessage = '';
 $studentData = null;
 
-// Fetch visiting persons
-$visitingPersonsQuery = "SELECT person_id, person_name FROM visiting_persons";
-$visitingPersonsResult = $pdo->query($visitingPersonsQuery);
+try {
+    // Fetch visiting persons
+    $visitingPersonsQuery = "SELECT person_id, person_name FROM visiting_persons";
+    $visitingPersonsStmt = $pdo->query($visitingPersonsQuery);
+    $visitingPersons = $visitingPersonsStmt->fetchAll(PDO::FETCH_ASSOC);
 
-$visitingPersons = [];
-while ($row = $visitingPersonsResult->fetch(PDO::FETCH_ASSOC)) {
-    $visitingPersons[] = $row;
-}
+    // Fetch reasons for visit
+    $reasonsQuery = "SELECT reason_id, reason_description FROM visit_reasons";
+    $reasonsStmt = $pdo->query($reasonsQuery);
+    $visitReasons = $reasonsStmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Fetch reasons for visit
-$reasonsQuery = "SELECT reason_id, reason_description FROM visit_reasons";
-$reasonsResult = $pdo->query($reasonsQuery);
+    // Handle Check-In
+    if (isset($_POST['checkin'])) {
+        $email_prefix = $_POST['email_prefix'] ?? '';
+        $visiting_person_id = intval($_POST['name'] ?? 0);
+        $visit_reason_id = intval($_POST['reason'] ?? 0);
+        $checkin_time = date('Y-m-d H:i:s');
 
-$visitReasons = [];
-while ($row = $reasonsResult->fetch(PDO::FETCH_ASSOC)) {
-    $visitReasons[] = $row;
-}
+        // Retrieve user data based on email_prefix
+        $userQuery = "SELECT * FROM users WHERE email LIKE ?";
+        $userStmt = $pdo->prepare($userQuery);
+        $userStmt->execute([$email_prefix . '%']);
 
-// Handle Check-In
-if (isset($_POST['checkin'])) {
-    $email_prefix = isset($_POST['email_prefix']) ? $_POST['email_prefix'] : '';
-    $visiting_person_id = isset($_POST['name']) ? intval($_POST['name']) : 0;
-    $visit_reason_id = isset($_POST['reason']) ? intval($_POST['reason']) : 0;
-    $checkin_time = date('Y-m-d H:i:s');
+        if ($userStmt->rowCount() > 0) {
+            $studentData = $userStmt->fetch(PDO::FETCH_ASSOC);
+            $user_id = $studentData['user_id'];
 
-    // Retrieve user data based on email_prefix
-    $userQuery = "SELECT * FROM users WHERE email LIKE ?";
-    $userStmt = $pdo->prepare($userQuery);
-    $userStmt->execute([$email_prefix . '%']);
+            // Insert the new visitor into the checkin_checkout table
+            $insertStmt = $pdo->prepare("INSERT INTO checkin_checkout (user_id, visiting_person_id, visit_reason_id, checkin_time) VALUES (?, ?, ?, ?)");
+            $insertStmt->execute([$user_id, $visiting_person_id, $visit_reason_id, $checkin_time]);
 
-    if ($userStmt->rowCount() > 0) {
-        $studentData = $userStmt->fetch();
-        $user_id = $studentData['user_id'];
-
-        // Insert the new visitor into the checkin_checkout table
-        $insertStmt = $pdo->prepare("INSERT INTO checkin_checkout (user_id, visiting_person_id, visit_reason_id, checkin_time) VALUES (?, ?, ?, ?)");
-        $insertStmt->execute([$user_id, $visiting_person_id, $visit_reason_id, $checkin_time]);
-        if ($insertStmt->rowCount() > 0) {
-            $successMessage = "Visitor checked in successfully!";
-        } else {
-            $errorMessage = "Error: " . implode(", ", $insertStmt->errorInfo());
-        }
-    } else {
-        $errorMessage = "Error: User not found.";
-    }
-}
-
-// Handle Check-Out
-if (isset($_POST['checkout'])) {
-    $email_prefix_out = isset($_POST['email_prefix_out']) ? $_POST['email_prefix_out'] : '';
-    $checkout_time = date('Y-m-d H:i:s');
-
-    // Retrieve user data based on email_prefix_out
-    $userQuery = "SELECT * FROM users WHERE email LIKE ?";
-    $userStmt = $pdo->prepare($userQuery);
-    $userStmt->execute([$email_prefix_out . '%']);
-
-    if ($userStmt->rowCount() > 0) {
-        $studentData = $userStmt->fetch();
-        $user_id = $studentData['user_id'];
-
-        // Find the latest check-in record for this user that hasn't been checked out
-        $checkinQuery = "SELECT * FROM checkin_checkout WHERE user_id = ? AND checkout_time IS NULL ORDER BY checkin_time DESC LIMIT 1";
-        $checkinStmt = $pdo->prepare($checkinQuery);
-        $checkinStmt->execute([$user_id]);
-
-        if ($checkinStmt->rowCount() > 0) {
-            $checkinData = $checkinStmt->fetch();
-
-            // Update the record to set the checkout_time
-            $updateQuery = "UPDATE checkin_checkout SET checkout_time = ? WHERE record_id = ?";
-            $updateStmt = $pdo->prepare($updateQuery);
-            $updateStmt->execute([$checkout_time, $checkinData['record_id']]);
-
-            if ($updateStmt->rowCount() > 0) {
-                $successMessage = "Checkout successful!";
+            if ($insertStmt->rowCount() > 0) {
+                $successMessage = "Visitor checked in successfully!";
             } else {
-                $errorMessage = "Error during checkout.";
+                $errorMessage = "Error: " . implode(", ", $insertStmt->errorInfo());
             }
         } else {
-            $errorMessage = "No active check-in found for this user.";
+            $errorMessage = "Error: User not found.";
         }
-    } else {
-        $errorMessage = "User not found.";
     }
+
+    // Handle Check-Out
+    if (isset($_POST['checkout'])) {
+        $email_prefix_out = $_POST['email_prefix_out'] ?? '';
+        $checkout_time = date('Y-m-d H:i:s');
+
+        // Retrieve user data based on email_prefix_out
+        $userQuery = "SELECT * FROM users WHERE email LIKE ?";
+        $userStmt = $pdo->prepare($userQuery);
+        $userStmt->execute([$email_prefix_out . '%']);
+
+        if ($userStmt->rowCount() > 0) {
+            $studentData = $userStmt->fetch(PDO::FETCH_ASSOC);
+            $user_id = $studentData['user_id'];
+
+            // Find the latest check-in record for this user that hasn't been checked out
+            $checkinQuery = "SELECT * FROM checkin_checkout WHERE user_id = ? AND checkout_time IS NULL ORDER BY checkin_time DESC LIMIT 1";
+            $checkinStmt = $pdo->prepare($checkinQuery);
+            $checkinStmt->execute([$user_id]);
+
+            if ($checkinStmt->rowCount() > 0) {
+                $checkinData = $checkinStmt->fetch(PDO::FETCH_ASSOC);
+
+                // Update the record to set the checkout_time
+                $updateQuery = "UPDATE checkin_checkout SET checkout_time = ? WHERE record_id = ?";
+                $updateStmt = $pdo->prepare($updateQuery);
+                $updateStmt->execute([$checkout_time, $checkinData['record_id']]);
+
+                if ($updateStmt->rowCount() > 0) {
+                    $successMessage = "Checkout successful!";
+                } else {
+                    $errorMessage = "Error during checkout.";
+                }
+            } else {
+                $errorMessage = "No active check-in found for this user.";
+            }
+        } else {
+            $errorMessage = "User not found.";
+        }
+    }
+} catch (PDOException $e) {
+    $errorMessage = "Database error: " . $e->getMessage();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -178,8 +176,8 @@ if (isset($_POST['checkout'])) {
     <form method="POST" action="">
         <table class="centered-table edit-table" border="1">
             <tr>
-                <td><label for="email_prefix">Email Prefix: (i.e. bart) </label></td>
-                <td><input type="text" name="email_prefix" id="email_prefix" placeholder="Email Prefix" required>@your.company.org</td>
+                <td><label for="email_prefix">Email Prefix: (i.e. tthumb) </label></td>
+                <td><input type="text" name="email_prefix" id="email_prefix" placeholder="Email Prefix" required>@k12.stgrsd.org</td>
             </tr>
             <tr>
                 <td><label for="name">Visiting (Name):</label></td>
@@ -219,8 +217,8 @@ if (isset($_POST['checkout'])) {
     <form method="POST" action="">
         <table class="centered-table edit-table" border="1">
             <tr>
-                <td><label for="email_prefix_out">Email Prefix (for Check-Out): (i.e. bart) </label></td>
-                <td><input type="text" name="email_prefix_out" id="email_prefix_out" placeholder="Email Prefix" required>@your.company.org</td>
+                <td><label for="email_prefix_out">Email Prefix (for Check-Out): (i.e. tthumb) </label></td>
+                <td><input type="text" name="email_prefix_out" id="email_prefix_out" placeholder="Email Prefix" required>@k12.stgrsd.org</td>
             </tr>
             <tr>
                 <td colspan="2"><center>
