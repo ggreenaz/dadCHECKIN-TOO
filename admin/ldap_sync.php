@@ -29,7 +29,7 @@ function fetchFromLDAP($config) {
         return false;
     }
 
-$search = ldap_search($ldapconn, $config['base_dn'], "(samaccountname=*)");
+$search = ldap_search($ldapconn, $config['base_dn'], "(objectClass=*)");
     if (!$search) {
         logMessage("LDAP Fetch", "LDAP search failed.");
         return false;
