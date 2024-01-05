@@ -3,6 +3,7 @@
 <head>
     <title>Database Installation</title>
     <link rel="stylesheet" type="text/css" href="../theme.php">
+    <link rel="stylesheet" type="text/css" href="../../css/style.css">
     <style>
         table {
             width: 60%;
@@ -14,10 +15,10 @@
     <h2>Database Installation</h2>
     <?php
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $servername = $_POST["servername"];
-        $username = $_POST["username"];
-        $password = $_POST["password"];
-        $dbname = $_POST["dbname"];
+        $servername = htmlspecialchars($_POST["servername"]);
+        $username = htmlspecialchars($_POST["username"]);
+        $password = htmlspecialchars($_POST["password"]);
+        $dbname = htmlspecialchars($_POST["dbname"]);
 
         // Create connection
         $conn = new mysqli($servername, $username, $password);
@@ -29,7 +30,7 @@
         echo "Connected to the database server<br>";
 
         // Create database
-        $sql = "CREATE DATABASE IF NOT EXISTS $dbname";
+        $sql = "CREATE DATABASE IF NOT EXISTS " . $conn->real_escape_string($dbname);
         if ($conn->query($sql) === TRUE) {
             echo "Database created successfully<br>";
         } else {
@@ -38,8 +39,7 @@
 
         // Select the database
         $conn->select_db($dbname);
-
-        // SQL to create tables
+       // SQL to create tables
         $tables = [
             "CREATE TABLE check_ins (
                 checkin_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -86,31 +86,38 @@
         ];
 
         foreach ($tables as $sql) {
-            if ($conn->query($sql) === TRUE) {
-                echo "Table created successfully<br>";
-            } else {
+            if ($conn->query($sql) !== TRUE) {
                 echo "Error creating table: " . $conn->error . "<br>";
+            } else {
+                echo "Table created successfully<br>";
             }
         }
 
         $conn->close();
         echo "Disconnected from the database server<br>";
 
-        // Create config.php file with PDO setup
-        $configFileContent = "<?php\n";
-        $configFileContent .= "try {\n";
-        $configFileContent .= "    \$pdo = new PDO(\"mysql:host=$servername;dbname=$dbname\", \"$username\", \"$password\");\n";
-        $configFileContent .= "    \$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);\n";
-        $configFileContent .= "} catch (PDOException \$e) {\n";
-        $configFileContent .= "    echo 'Connection failed: ' . \$e->getMessage();\n";
-        $configFileContent .= "}\n";
-        $configFileContent .= "?>";
 
-        file_put_contents('../../config.php', $configFileContent);
-        echo "config.php file created successfully.<br>";
 
-        // Display the link to the admin dashboard after all operations are complete
-        echo '<h2><a href="../admin" class="button">Return to Admin Dashboard</a></h2>';
+
+// Create config.php file with PDO setup
+$configFileContent = "<?php\n";
+$configFileContent .= "try {\n";
+$configFileContent .= "    \$pdo = new PDO(\"mysql:host=$servername;dbname=$dbname\", \"$username\", \"$password\");\n";
+$configFileContent .= "    \$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);\n";
+$configFileContent .= "} catch (PDOException \$e) {\n";
+$configFileContent .= "    echo 'Connection failed: ' . \$e->getMessage();\n";
+$configFileContent .= "}\n";
+$configFileContent .= "?>";
+
+file_put_contents('../config.php', $configFileContent);  // Corrected path
+echo "config.php file created successfully.<br>";
+
+
+
+
+
+
+        echo '<h2><a href="../" class="button">Return to Admin Dashboard</a></h2>';
         echo '<h2>Be sure to delete the install/install.php script for added security!</h2>';
 
     } else {
