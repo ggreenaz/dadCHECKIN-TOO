@@ -108,9 +108,24 @@ In most cases, if you are on a Linux server, it would be
 
     0 0 * * * /usr/bin/php /var/www/html/admin/ldap_sync.php
 
+NOTE: I want to add that for your cron job, based upon your distribution, you may need specify in your ldap_sync.php file the absolute path in your code. I have made the paths relative, and this cold cause you issues with your running the cron job. Therefore, if your cron breaks, make your paths absolute, based upon the example I have in my ldap_sync.php below.
+
+    <?php
+    ini_set('display_errors', 1);
+    error_reporting(E_ALL);
+    
+    require_once '/var/www/html/config.php';  // Ensure this path is correct
+    $config = require_once '/var/www/html/admin/ldap.config.php';
+    
+    function logMessage($source, $message) {
+        $logFile = '/var/log/ldap_sync.log';
+        $timestamp = date('Y-m-d H:i:s');
+        file_put_contents($logFile, "[$timestamp] [$source] $message\n", FILE_APPEND);
+    }
+    
 Once you have filled out the settings.php credentials, you will redirected to the  update_ldap_settings.php page, where you can test your connection. 
 
-For the first time, many people will populate their database by running a CLI command: 
+For the first time, many people will populate their database by running a CLI command from the directory /path/to/dad/admin/: 
 
     php ./ldap_sync.php > /var/log/ldap_sync.log 2>&1 &
 
