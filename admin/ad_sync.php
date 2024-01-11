@@ -2,8 +2,8 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-require_once '../config.php';  // Ensure this path is correct
-$config = require_once './ldap.config.php';
+require_once '/var/www/html/config.php';  // Ensure this path is correct
+$config = require_once '/var/www/html/admin/ldap.config.php';
 
 function logMessage($source, $message) {
     $logFile = '/var/log/ldap_sync.log';
@@ -29,7 +29,39 @@ function fetchFromLDAP($config) {
         return false;
     }
 
-$search = ldap_search($ldapconn, $config['base_dn'], "(samaccountname=*)");
+    $search = ldap_search($ldapconn, $config['base_dn'], "(objectClass=*)");
+    if (!$search) {
+        logMessage("LDAP Fetch", "LDAP search failed.");
+        return false;
+    }
+
+    $entries = ldap_get_entries($ldapconn, $search);
+    ldap_unbind($ldapconn);
+    return $entries;
+}
+
+function fetchUsersFromOU($config, $ouDN) {
+    $ldapconn = ldap_connect($config['ldap_server']);
+    if (!$ldapconn) {
+        logMessage("LDAP Connection", "Could not connect to LDAP server.");
+        return false;
+    }
+
+    ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, $config['version']);
+    if($config['use_tls']) {
+        ldap_start_tls($ldapconn);
+    }
+
+    $bind = ldap_bind($ldapconn, $config['ldap_user'], $config['ldap_password']);
+    if (!$bind) {
+        logMessage("LDAP Connection", "Could not bind to LDAP server.");
+        return false;
+    }
+
+    // Adjust the LDAP search base to the specific OU's DN
+    $searchBase = "OU=$ouDN," . $config['base_dn'];
+
+    $search = ldap_search($ldapconn, $searchBase, "(objectClass=person)");
     if (!$search) {
         logMessage("LDAP Fetch", "LDAP search failed.");
         return false;
@@ -78,8 +110,17 @@ function syncUsers($ldapUsers, $pdo) {
 // Starting the script
 logMessage("Script Status", "Script started.");
 
-// Perform LDAP fetch
-$ldapUsers = fetchFromLDAP($config);
+// Specify the OU's DN you want to fetch users from
+$ouDN = "YourOUNameHere";
+
+// Perform LDAP fetch for users in the specified OU
+$ldapUsers = fetchUsersFromOU($config, $ouDN);
+
+if (!$ldapUsers) {
+    // If the OU fetch fails, fall back to fetching all users
+    $ldapUsers = fetchFromLDAP($config);
+}
+
 if ($ldapUsers) {
     if(isset($pdo) && $pdo instanceof PDO) {
         syncUsers($ldapUsers, $pdo);
