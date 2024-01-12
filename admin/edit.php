@@ -26,7 +26,9 @@ FROM checkin_checkout
 INNER JOIN users ON checkin_checkout.user_id = users.user_id
 LEFT JOIN visiting_persons ON checkin_checkout.visiting_person_id = visiting_persons.person_id
 LEFT JOIN visit_reasons ON checkin_checkout.visit_reason_id = visit_reasons.reason_id
-WHERE 1";
+WHERE 1
+ORDER BY checkin_checkout.checkin_time DESC";
+
 
 if (!empty($search)) {
     $baseQuery .= " AND (users.first_name LIKE :search OR users.last_name LIKE :search)";
