@@ -1,0 +1,27 @@
+# ── Credentials & local config ───────────────────────────────
+config/database.local.php
+config/database.local.php.bak
+config/database.local.php.demo_backup
+config/*.local.php
+.env
+
+# ── Installation state ────────────────────────────────────────
+config/installed.lock
+
+# ── Logs ─────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Claude Code local config ─────────────────────────────────
+.claude/
+
+# ── OS / editor junk ─────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ── Uploaded files (if any) ───────────────────────────────────
+public/uploads/
