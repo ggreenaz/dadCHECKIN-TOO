@@ -1,0 +1,12 @@
+# dadCHECKIN-TOO — Root redirect to public/
+# This file is dropped by git checkout and allows the app to run even before
+# Apache DocumentRoot has been updated to point at public/.
+# Once DocumentRoot is updated to public/, this file has no effect.
+
+RewriteEngine On
+
+# Don't rewrite if already inside public/
+RewriteCond %{REQUEST_URI} !^/public/
+
+# Forward everything to public/
+RewriteRule ^(.*)$ public/$1 [L,QSA]
