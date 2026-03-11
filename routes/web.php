@@ -14,6 +14,9 @@ use App\Controllers\UserController;
 
 // ── Install wizard ───────────────────────────────────────────────
 $router->get( '/install',              [InstallController::class, 'choosePath']);
+$router->get( '/install/syscheck',          [InstallController::class, 'sysCheck']);
+$router->post('/install/syscheck',          [InstallController::class, 'sysCheck']);
+$router->post('/install/syscheck/continue', [InstallController::class, 'sysCheckContinue']);
 $router->get( '/install/guided',       [InstallController::class, 'guidedInfo']);
 $router->get( '/install/upgrade',      [InstallController::class, 'upgradePage']);
 $router->post('/install/upgrade/run',  [InstallController::class, 'upgradeRun']);

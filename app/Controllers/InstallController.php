@@ -72,10 +72,206 @@ class InstallController extends Controller
         return (bool) file_put_contents($this->dbLocalFile, $content);
     }
 
+    // ── System Check ─────────────────────────────────────────────
+
+    /**
+     * Run all pre-flight checks and attempt to auto-fix what we can.
+     * Returns an array of check result arrays:
+     *   [ 'label', 'status' (ok|warn|fail), 'detail', 'fixed' (bool), 'cmd' (string|null) ]
+     */
+    private function runSysCheck(): array
+    {
+        $isRoot    = (function_exists('posix_getuid') && posix_getuid() === 0);
+        $canShell  = function_exists('shell_exec') && !in_array('shell_exec', array_map('trim', explode(',', ini_get('disable_functions'))));
+        $basePath  = BASE_PATH;
+        $publicDir = $basePath . '/public';
+        $configDir = $basePath . '/config';
+        $checks    = [];
+
+        // ── PHP extensions ────────────────────────────────────────
+        $required = ['pdo_mysql', 'mbstring', 'curl', 'json', 'openssl'];
+        $optional = ['ldap'];
+        foreach ($required as $ext) {
+            $checks[] = [
+                'label'  => "PHP extension: <code>{$ext}</code>",
+                'status' => extension_loaded($ext) ? 'ok' : 'fail',
+                'detail' => extension_loaded($ext) ? 'Loaded' : 'Missing — required',
+                'fixed'  => false,
+                'cmd'    => extension_loaded($ext) ? null : "apt install php-{$ext} && systemctl restart apache2",
+            ];
+        }
+        foreach ($optional as $ext) {
+            $checks[] = [
+                'label'  => "PHP extension: <code>{$ext}</code>",
+                'status' => extension_loaded($ext) ? 'ok' : 'warn',
+                'detail' => extension_loaded($ext) ? 'Loaded' : 'Not loaded — only needed for LDAP/AD login',
+                'fixed'  => false,
+                'cmd'    => extension_loaded($ext) ? null : "apt install php-ldap && systemctl restart apache2",
+            ];
+        }
+
+        // ── PHP version ───────────────────────────────────────────
+        $phpOk = version_compare(PHP_VERSION, '8.1.0', '>=');
+        $checks[] = [
+            'label'  => 'PHP version',
+            'status' => $phpOk ? 'ok' : 'fail',
+            'detail' => 'PHP ' . PHP_VERSION . ($phpOk ? '' : ' — 8.1+ required'),
+            'fixed'  => false,
+            'cmd'    => null,
+        ];
+
+        // ── config/ directory writable ────────────────────────────
+        $configWritable = is_writable($configDir);
+        $configFixed    = false;
+        if (!$configWritable && $isRoot) {
+            @chmod($configDir, 0775);
+            @chown($configDir, 'www-data');
+            $configWritable = is_writable($configDir);
+            $configFixed    = $configWritable;
+        }
+        $checks[] = [
+            'label'  => '<code>config/</code> directory writable',
+            'status' => $configWritable ? 'ok' : 'fail',
+            'detail' => $configWritable ? ($configFixed ? 'Fixed automatically' : 'Writable') : 'Not writable — wizard cannot save config',
+            'fixed'  => $configFixed,
+            'cmd'    => $configWritable ? null : "chmod 775 {$configDir} && chown www-data:www-data {$configDir}",
+        ];
+
+        // ── public/ directory permissions ─────────────────────────
+        $publicReadable = is_readable($publicDir);
+        $publicFixed    = false;
+        if (!$publicReadable && $isRoot) {
+            @chmod($publicDir, 0755);
+            $publicReadable = is_readable($publicDir);
+            $publicFixed    = $publicReadable;
+        }
+        $checks[] = [
+            'label'  => '<code>public/</code> directory readable',
+            'status' => $publicReadable ? 'ok' : 'fail',
+            'detail' => $publicReadable ? ($publicFixed ? 'Fixed automatically' : 'Readable') : 'Not readable by web server',
+            'fixed'  => $publicFixed,
+            'cmd'    => $publicReadable ? null : "chmod 755 {$publicDir}",
+        ];
+
+        // ── DocumentRoot check ────────────────────────────────────
+        $docRoot        = rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/');
+        $expectedRoot   = rtrim($publicDir, '/');
+        $docRootOk      = ($docRoot === $expectedRoot);
+        $docRootFixed   = false;
+
+        if (!$docRootOk && $isRoot && $canShell) {
+            // Try to find and fix the Apache vhost config for this ServerName
+            $serverName = $_SERVER['SERVER_NAME'] ?? '';
+            $confFiles  = glob('/etc/apache2/sites-enabled/*.conf') ?: [];
+            foreach ($confFiles as $confFile) {
+                $contents = file_get_contents($confFile);
+                if ($serverName && strpos($contents, $serverName) === false) continue;
+                // Replace the DocumentRoot line
+                $newContents = preg_replace(
+                    '/DocumentRoot\s+\S+/m',
+                    'DocumentRoot ' . $expectedRoot,
+                    $contents
+                );
+                // Replace the <Directory ...> path as well
+                $newContents = preg_replace(
+                    '/<Directory\s+' . preg_quote($docRoot, '/') . '\s*>/m',
+                    '<Directory ' . $expectedRoot . '>',
+                    $newContents
+                );
+                if ($newContents !== $contents) {
+                    file_put_contents($confFile, $newContents);
+                    shell_exec('systemctl reload apache2 2>&1');
+                    $docRootFixed = true;
+                    break;
+                }
+            }
+        }
+
+        $checks[] = [
+            'label'  => 'Apache <code>DocumentRoot</code>',
+            'status' => ($docRootOk || $docRootFixed) ? 'ok' : 'warn',
+            'detail' => ($docRootOk || $docRootFixed)
+                ? ($docRootFixed ? "Fixed automatically → {$expectedRoot}" : "Correctly set to <code>{$expectedRoot}</code>")
+                : "Currently <code>{$docRoot}</code> — should be <code>{$expectedRoot}</code>",
+            'fixed'  => $docRootFixed,
+            'cmd'    => ($docRootOk || $docRootFixed) ? null
+                : "# In your Apache vhost config:\nDocumentRoot {$expectedRoot}\n\n# Then:\nsystemctl reload apache2",
+        ];
+
+        // ── mod_rewrite ───────────────────────────────────────────
+        $rewriteOk    = false;
+        $rewriteFixed = false;
+        if (function_exists('apache_get_modules')) {
+            $rewriteOk = in_array('mod_rewrite', apache_get_modules());
+        } elseif ($canShell) {
+            $rewriteOk = (strpos((string)shell_exec('apache2ctl -M 2>/dev/null'), 'rewrite') !== false);
+        }
+        if (!$rewriteOk && $isRoot && $canShell) {
+            shell_exec('a2enmod rewrite 2>&1 && systemctl reload apache2 2>&1');
+            $rewriteFixed = true;
+            $rewriteOk    = true;
+        }
+        $checks[] = [
+            'label'  => 'Apache <code>mod_rewrite</code>',
+            'status' => $rewriteOk ? 'ok' : 'fail',
+            'detail' => $rewriteOk ? ($rewriteFixed ? 'Enabled automatically' : 'Enabled') : 'Not enabled — all routes will return 404',
+            'fixed'  => $rewriteFixed,
+            'cmd'    => $rewriteOk ? null : "a2enmod rewrite && systemctl reload apache2",
+        ];
+
+        // ── Legacy config.php detected ────────────────────────────
+        $legacyConfig = $basePath . '/config.php';
+        if (file_exists($legacyConfig)) {
+            $checks[] = [
+                'label'  => 'Legacy <code>config.php</code> detected',
+                'status' => 'ok',
+                'detail' => 'dadtoo v1 config.php found — credentials will be read automatically',
+                'fixed'  => false,
+                'cmd'    => null,
+            ];
+        }
+
+        return $checks;
+    }
+
+    public function sysCheck(array $params): void
+    {
+        $checks   = $this->runSysCheck();
+        $hasFail  = !empty(array_filter($checks, fn($c) => $c['status'] === 'fail'));
+        $hasFixed = !empty(array_filter($checks, fn($c) => $c['fixed']));
+
+        $this->view->render('install/syscheck', [
+            'title'    => 'System Check',
+            'checks'   => $checks,
+            'hasFail'  => $hasFail,
+            'hasFixed' => $hasFixed,
+            'flash'    => $this->flash(),
+        ], 'install');
+    }
+
+    public function sysCheckContinue(array $params): void
+    {
+        // Only allow continue if all required checks pass
+        $checks  = $this->runSysCheck();
+        $hasFail = !empty(array_filter($checks, fn($c) => $c['status'] === 'fail'));
+        if ($hasFail) {
+            $this->redirect('/install/syscheck');
+            return;
+        }
+        $_SESSION['syscheck_passed'] = true;
+        $this->redirect('/install');
+    }
+
     // ── Path chooser ─────────────────────────────────────────────
 
     public function choosePath(array $params): void
     {
+        // First visit: redirect through system check unless already passed
+        if (empty($_SESSION['syscheck_passed'])) {
+            $this->redirect('/install/syscheck');
+            return;
+        }
+
         // If no v2 local config exists yet, check for a legacy dadtoo config.php
         // sitting in the same directory. If found, parse credentials and write the
         // local config automatically — the user never has to retype anything.
