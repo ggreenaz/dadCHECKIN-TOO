@@ -158,7 +158,16 @@ class AdminController extends Controller
         'notifications'   => ['title' => 'Notifications',        'back' => '/admin/setup/notifications', 'icon' => '🔔'],
         'configuration'   => ['title' => 'Configuration Guide',  'back' => '/admin/settings',            'icon' => '📖'],
         'userguide'       => ['title' => 'End User Guide',        'back' => '/admin/docs/userguide',      'icon' => '📘'],
+        'installguide'    => ['title' => 'Installation Guide',    'back' => '/admin/docs/installguide',   'icon' => '📋'],
     ];
+
+    public function installGuide(array $params): void
+    {
+        $this->requireAuth();
+        header('Content-Type: text/html; charset=UTF-8');
+        include BASE_PATH . '/app/Views/admin/docs/installguide.php';
+        exit;
+    }
 
     public function userGuide(array $params): void
     {

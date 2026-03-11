@@ -109,7 +109,8 @@ $router->post('/admin/users/:id/reactivate',   [UserController::class, 'reactiva
 // ── Admin — docs ─────────────────────────────────────────────────
 $router->get('/admin/docs',             [AdminController::class, 'docsIndex']);
 $router->get('/admin/docs/search',      [AdminController::class, 'docsSearch']);
-$router->get('/admin/docs/userguide',   [AdminController::class, 'userGuide']);
+$router->get('/admin/docs/userguide',      [AdminController::class, 'userGuide']);
+$router->get('/admin/docs/installguide',   [AdminController::class, 'installGuide']);
 $router->get('/admin/docs/:page',       [AdminController::class, 'docs']);
 
 // ── Admin — settings ─────────────────────────────────────────────
