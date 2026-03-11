@@ -225,15 +225,16 @@ class CheckinController extends Controller
         ]);
 
         $wasStaff = !empty($kioskVisitor['is_staff']);
-        unset($_SESSION['kiosk_visitor']);
 
         if ($wasStaff) {
+            unset($_SESSION['kiosk_visitor']);
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'You are checked in. Have a great visit!'];
             $this->redirect('/admin');
             return;
         }
 
-        // Show thank-you screen with countdown before returning to clean kiosk
+        // Keep kiosk_visitor in session so returning to /checkin shows checkout state
+        // Show thank-you screen with countdown before returning to kiosk
         $_SESSION['checkin_success_name'] = $firstName;
         $this->redirect('/checkin/success');
     }
