@@ -266,8 +266,11 @@ class InstallController extends Controller
 
     public function choosePath(array $params): void
     {
-        // First visit: redirect through system check unless already passed
-        if (empty($_SESSION['syscheck_passed'])) {
+        // Skip syscheck for upgrades — if a legacy config.php exists the server
+        // is already running dadtoo v1 and known-good. Only run syscheck for
+        // fresh installs where the user may not have configured anything yet.
+        $isUpgrade = file_exists(BASE_PATH . '/config.php');
+        if (!$isUpgrade && empty($_SESSION['syscheck_passed'])) {
             $this->redirect('/install/syscheck');
             return;
         }
