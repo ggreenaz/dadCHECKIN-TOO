@@ -56,6 +56,7 @@ $router->get( '/auth/callback/:provider',   [AuthController::class, 'oauthCallba
 // ── Public kiosk ─────────────────────────────────────────────────
 $router->get( '/',                  [CheckinController::class, 'index']);
 $router->get( '/checkin',           [CheckinController::class, 'index']);
+$router->get( '/checkin/success',   [CheckinController::class, 'success']);
 $router->post('/checkin/auth',      [CheckinController::class, 'kioskAuth']);
 $router->post('/checkin/checkout',  [CheckinController::class, 'kioskCheckout']);
 $router->get( '/checkin/cancel',    [CheckinController::class, 'kioskCancel']);
