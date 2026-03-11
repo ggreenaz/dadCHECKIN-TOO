@@ -51,11 +51,20 @@ chmod 664 /var/www/checkin/config/database.php
 
 ## Upgrading from dadtoo v1
 
-If you are upgrading from the original dadtoo system:
+Run these commands **inside your existing dadtoo directory** — the new code installs on top, your `config.php` stays in place, and the wizard reads your database credentials automatically:
 
-1. Clone this repository alongside your existing installation
-2. Visit `/install` — the wizard detects your existing dadtoo database
-3. Follow the **Guided Upgrade** path — it migrates all your hosts, reasons, visitors, and visit history
+```bash
+cd /var/www/dadtoo        # your existing dadtoo directory
+git init
+git remote add origin https://github.com/ggreenaz/dadCHECKIN-TOO.git
+git fetch origin
+git checkout -f master
+chown -R www-data:www-data .
+chmod -R 755 .
+chmod 775 config
+```
+
+Then visit `http://yourdomain.com/install` — the wizard detects your existing dadtoo database and walks you through the **Guided Upgrade**. No re-entering of credentials required.
 
 ---
 
