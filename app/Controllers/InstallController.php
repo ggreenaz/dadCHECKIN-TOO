@@ -29,10 +29,58 @@ class InstallController extends Controller
         $this->dbLocalFile = BASE_PATH . '/config/database.local.php';
     }
 
+    /**
+     * Detect an old dadtoo v1 config.php sitting in BASE_PATH and, if found,
+     * parse the hardcoded credentials and write config/database.local.php so
+     * the upgrade wizard can proceed without asking the user to re-enter anything.
+     *
+     * Returns true if credentials were successfully extracted and written.
+     */
+    private function autoDetectLegacyConfig(): bool
+    {
+        if (file_exists($this->dbLocalFile)) {
+            return false; // Already have a local config — nothing to do
+        }
+
+        $legacyConfig = BASE_PATH . '/config.php';
+        if (!file_exists($legacyConfig)) {
+            return false;
+        }
+
+        $src = file_get_contents($legacyConfig);
+
+        // Extract the four hardcoded variables from the getDBConnection() function
+        $host = $user = $pass = $name = null;
+        if (preg_match('/\$db_server\s*=\s*["\']([^"\']+)["\']/', $src, $m))   $host = $m[1];
+        if (preg_match('/\$db_username\s*=\s*["\']([^"\']+)["\']/', $src, $m)) $user = $m[1];
+        if (preg_match('/\$db_password\s*=\s*["\']([^"\']+)["\']/', $src, $m)) $pass = $m[1];
+        if (preg_match('/\$db_database\s*=\s*["\']([^"\']+)["\']/', $src, $m)) $name = $m[1];
+
+        if (!$host || !$user || !$name) {
+            return false; // Could not parse — leave wizard to ask manually
+        }
+
+        // Write the v2-format local config so choosePath() can connect and detect
+        $content = "<?php\nreturn [\n"
+            . "    'host'     => " . var_export($host, true) . ",\n"
+            . "    'port'     => 3306,\n"
+            . "    'database' => " . var_export($name, true) . ",\n"
+            . "    'username' => " . var_export($user, true) . ",\n"
+            . "    'password' => " . var_export((string)$pass, true) . ",\n"
+            . "];\n";
+
+        return (bool) file_put_contents($this->dbLocalFile, $content);
+    }
+
     // ── Path chooser ─────────────────────────────────────────────
 
     public function choosePath(array $params): void
     {
+        // If no v2 local config exists yet, check for a legacy dadtoo config.php
+        // sitting in the same directory. If found, parse credentials and write the
+        // local config automatically — the user never has to retype anything.
+        $this->autoDetectLegacyConfig();
+
         // If a database config already exists, auto-detect and route
         if (file_exists($this->dbLocalFile)) {
             try {

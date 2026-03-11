@@ -318,10 +318,11 @@ tr:nth-child(even) td { background: #f8fafc; }
     </ul>
 
     <h3>Upgrading from dadtoo v1?</h3>
-    <p>You will also need read access to the old database during the upgrade wizard. Have these ready:</p>
+    <p>Good news — you don't need to gather database credentials. The upgrade wizard reads them directly from your existing <code>config.php</code>. All you need is:</p>
     <ul class="check-list">
-        <li>Old database hostname, name, username, and password</li>
-        <li>Know which table prefix your old database uses (usually none)</li>
+        <li>SSH access to your server</li>
+        <li>Your organization name and time zone (to confirm during the wizard)</li>
+        <li>A database backup (strongly recommended before any upgrade)</li>
     </ul>
 
     <div class="callout callout-warn">
@@ -391,12 +392,12 @@ chmod -R 755 /var/www/checkin</code></pre>
     <div class="section-num">SECTION 4</div>
     <h2>Upgrading from dadtoo v1</h2>
     <p>
-        dadCHECKIN-TOO includes a built-in guided upgrade wizard that migrates all of your existing hosts, visit reasons, visitors, and visit history from the original dadtoo database. No manual SQL is required.
+        The upgrade is designed to install <strong>on top of your existing dadtoo directory</strong>. The new v2 code lands in the same folder your old installation is already in. Your existing <code>config.php</code> stays in place — the upgrade wizard reads your database credentials from it automatically. You do not need to re-enter anything.
     </p>
 
     <div class="callout callout-warn">
-        <span class="callout-label">Before you start:</span>
-        Back up your old dadtoo database. The upgrade wizard only reads from the old database, but accidents happen. Run:
+        <span class="callout-label">Back up first:</span>
+        Always back up your database before upgrading.
         <code>mysqldump -u root -p dadtoo &gt; dadtoo_backup_$(date +%Y%m%d).sql</code>
     </div>
 
@@ -404,61 +405,77 @@ chmod -R 755 /var/www/checkin</code></pre>
         <li>
             <div class="step-badge">1</div>
             <div class="step-body">
-                <strong>Clone the new codebase</strong> to a new directory alongside the old installation.
-<pre><code>git clone https://github.com/ggreenaz/dadCHECKIN-TOO.git /var/www/checkin</code></pre>
-                Do not delete the old installation yet — the upgrade wizard needs to connect to its database.
+                <strong>Go into your existing dadtoo directory</strong> (wherever Apache currently points).
+<pre><code>cd /var/www/dadtoo</code></pre>
             </div>
         </li>
         <li>
             <div class="step-badge">2</div>
             <div class="step-body">
-                <strong>Set permissions</strong> on the new directory.
-<pre><code>chown -R www-data:www-data /var/www/checkin
-chmod -R 755 /var/www/checkin</code></pre>
+                <strong>Pull the v2 code on top of the existing installation.</strong> This leaves your <code>config.php</code> in place and adds all new files.
+<pre><code>git init
+git remote add origin https://github.com/ggreenaz/dadCHECKIN-TOO.git
+git fetch origin
+git checkout -f master</code></pre>
             </div>
         </li>
         <li>
             <div class="step-badge">3</div>
             <div class="step-body">
-                <strong>Update your Apache virtual host</strong> to point to <code>/var/www/checkin/public</code>. Reload Apache after editing.
-<pre><code>systemctl reload apache2</code></pre>
+                <strong>Set permissions</strong> so Apache can read the new files.
+<pre><code>chown -R www-data:www-data /var/www/dadtoo
+chmod -R 755 /var/www/dadtoo
+chmod 775 /var/www/dadtoo/config</code></pre>
             </div>
         </li>
         <li>
             <div class="step-badge">4</div>
             <div class="step-body">
-                <strong>Open the install wizard</strong> in your browser.
-<pre><code>http://checkin.myschool.org/install</code></pre>
-                The wizard will detect the presence of an existing dadtoo database and offer a <strong>Guided Upgrade</strong> path automatically.
+                <strong>Update your Apache virtual host</strong> to point to the <code>public/</code> subdirectory.
+<pre><code>DocumentRoot /var/www/dadtoo/public</code></pre>
+                Reload Apache after saving the change:
+<pre><code>systemctl reload apache2</code></pre>
             </div>
         </li>
         <li>
             <div class="step-badge">5</div>
             <div class="step-body">
-                <strong>Follow the Guided Upgrade steps</strong>:
-                <ol>
-                    <li>Enter old database connection details</li>
-                    <li>Configure organization name and time zone</li>
-                    <li>Set up departments (new in v2)</li>
-                    <li>Configure authentication (local, LDAP, or SSO)</li>
-                    <li>Configure kiosk fields and appearance</li>
-                    <li>Set up notifications (optional)</li>
-                    <li>Run the migration — all data streams in real time</li>
-                    <li>Review summary and finish</li>
-                </ol>
+                <strong>Visit <code>/install</code> in your browser.</strong>
+                <p>The wizard detects your existing <code>config.php</code>, reads your database credentials automatically, and routes you straight into the <strong>Guided Upgrade</strong> — no re-typing of connection details required.</p>
             </div>
         </li>
         <li>
             <div class="step-badge">6</div>
             <div class="step-body">
-                <strong>Verify the migration</strong> by logging in and checking your visit history, hosts, and reasons. Once satisfied, you can archive or delete the old installation directory.
+                <strong>Follow the Guided Upgrade steps:</strong>
+                <ol>
+                    <li>Confirm organization name and time zone</li>
+                    <li>Set up departments (new in v2)</li>
+                    <li>Configure authentication (local, LDAP, or SSO)</li>
+                    <li>Configure kiosk fields and appearance</li>
+                    <li>Set up notifications (optional)</li>
+                    <li>Run the migration — all data streams in real time</li>
+                    <li>Review the summary and finish</li>
+                </ol>
+            </div>
+        </li>
+        <li>
+            <div class="step-badge">7</div>
+            <div class="step-body">
+                <strong>Verify the migration</strong> by logging in and checking your visit history, hosts, and reasons.
             </div>
         </li>
     </ol>
 
     <div class="callout callout-info">
         <span class="callout-label">What gets migrated:</span>
-        All visitor records, visit history, host names, visit reasons, and organization settings are migrated. Admin user accounts are not migrated from v1 — you will create a fresh admin account during the wizard.
+        All visitor records, visit history, host names, visit reasons, and organization settings are migrated automatically. Admin user accounts are not migrated from v1 — you will create a fresh admin account during the wizard.
+    </div>
+
+    <div class="callout callout-tip">
+        <span class="callout-label">Future updates:</span>
+        Once v2 is installed, updating to a newer release is simply:
+        <code>cd /var/www/dadtoo &amp;&amp; git pull</code>
     </div>
 </div>
 
