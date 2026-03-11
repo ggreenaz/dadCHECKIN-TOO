@@ -93,11 +93,16 @@ var elapsed = 0;
 var bar     = document.getElementById('cbar');
 var sec     = document.getElementById('csec');
 
+// Let the page paint first, then start shrinking
+setTimeout(function() {
+    bar.style.width = ((total - 1) / total * 100) + '%';
+}, 50);
+
 var timer = setInterval(function() {
     elapsed++;
     var pct = ((total - elapsed) / total) * 100;
-    bar.style.width = pct + '%';
-    sec.textContent = total - elapsed;
+    bar.style.width = Math.max(pct, 0) + '%';
+    sec.textContent = Math.max(total - elapsed, 0);
     if (elapsed >= total) {
         clearInterval(timer);
         window.location.href = '/checkin';
