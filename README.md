@@ -36,44 +36,51 @@ Built with PHP 8.1+, MySQL 8, and Apache. No frameworks. No composer. Just drop 
 # 1. Clone into your web root
 git clone https://github.com/ggreenaz/dadCHECKIN-TOO.git /var/www/checkin
 
-# 2. If running as root, tell git it's safe to operate here
+# 2. Set permissions (run as root)
 git config --global --add safe.directory /var/www/checkin
-
-# 3. Set permissions
 chown -R www-data:www-data /var/www/checkin
 chmod -R 755 /var/www/checkin
 chmod 775 /var/www/checkin/config
 
-# 4. Point Apache at the public/ directory (see docs/install-guide for full vhost config)
+# 3. Point Apache DocumentRoot at /var/www/checkin/public
+#    (see README — Apache Config section — for a full vhost example)
 
-# 5. Visit http://yourdomain.com/install in your browser
-#    The wizard will guide you through the rest.
+# 4. Visit http://yourdomain.com/install — the wizard does the rest
 ```
 
 ---
 
 ## Upgrading from dadtoo v1
 
-Run these commands **inside your existing dadtoo directory** — the new code installs on top, your `config.php` stays in place, and the wizard reads your database credentials automatically:
+Run the upgrade script **inside your existing dadtoo directory** — it handles git permissions, fetches the code, resets to the exact GitHub state, and sets permissions automatically:
 
 ```bash
 cd /var/www/dadtoo        # your existing dadtoo directory
 
-# If running as root, tell git it's safe to operate here
-git config --global --add safe.directory /var/www/dadtoo
+bash <(curl -s https://raw.githubusercontent.com/ggreenaz/dadCHECKIN-TOO/master/upgrade.sh)
+```
 
+That's it. The script:
+1. Adds the `safe.directory` git exception (fixes the root/www-data ownership issue)
+2. Initialises the git repo and sets the remote
+3. Fetches from GitHub and does `git reset --hard origin/master` to guarantee a clean state
+4. Sets ownership and permissions
+
+Then visit `http://yourdomain.com/install` — the wizard detects your existing dadtoo database and walks you through the **Guided Upgrade**. No re-entering of credentials required.
+
+### Manual steps (if curl is unavailable)
+
+```bash
+cd /var/www/dadtoo
+git config --global --add safe.directory "$(pwd)"
 git init
 git remote add origin https://github.com/ggreenaz/dadCHECKIN-TOO.git
 git fetch origin
-git checkout -f master
+git reset --hard origin/master
 chown -R www-data:www-data .
 chmod -R 755 .
 chmod 775 config
 ```
-
-> **Note:** If your directory is named something other than `dadtoo`, replace `/var/www/dadtoo` in the `safe.directory` line with your actual path.
-
-Then visit `http://yourdomain.com/install` — the wizard detects your existing dadtoo database and walks you through the **Guided Upgrade**. No re-entering of credentials required.
 
 ---
 
