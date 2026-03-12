@@ -49,9 +49,6 @@ body{background:{$__bg}!important;}</style>\n";
                 dadCHECKIN-TOO
             <?php endif; ?>
         </span>
-        <?php if (!empty($org)): ?>
-            <span class="site-org"><?= \App\Core\View::e($org['name']) ?></span>
-        <?php endif; ?>
         <?php if (\App\Core\Auth::check()):
             $__role     = $_SESSION['user_role'] ?? 'staff';
             $__name     = $_SESSION['user_name'] ?? 'User';
