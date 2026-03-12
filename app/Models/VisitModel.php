@@ -43,7 +43,7 @@ class VisitModel extends Model
             $bindings[] = $locationId;
         }
 
-        $sql .= ' ORDER BY vi.check_in_time ASC';
+        $sql .= ' ORDER BY vi.check_in_time ASC LIMIT 500';
 
         $stmt = Database::getInstance()->prepare($sql);
         $stmt->execute($bindings);
