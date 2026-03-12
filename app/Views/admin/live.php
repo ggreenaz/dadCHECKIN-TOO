@@ -35,6 +35,12 @@
             Select All Flagged
         </button>
         <span id="stale-count-label" style="color:var(--text-muted);font-size:0.875rem;"></span>
+        <form method="POST" action="/admin/live/checkout-all" style="margin-left:auto;"
+              onsubmit="return confirm('This will check out ALL <?= count($activeVisits) ?> open visitor records. This cannot be undone. Continue?')">
+            <button type="submit" class="button" style="background:var(--danger);border-color:var(--danger);white-space:nowrap;">
+                Check Out All (<?= count($activeVisits) ?>)
+            </button>
+        </form>
     </div>
 
     <!-- Bulk action bar — shown when any are checked -->

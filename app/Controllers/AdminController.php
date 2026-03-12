@@ -541,6 +541,31 @@ class AdminController extends Controller
         $this->redirect('/admin/live');
     }
 
+    public function checkoutAll(array $params): void
+    {
+        $this->requireRole('org_admin');
+        $orgId = $this->orgId();
+        $db    = Database::getInstance();
+
+        $stmt = $db->prepare(
+            "UPDATE visits
+             SET check_out_time = NOW(),
+                 status         = 'auto_completed',
+                 updated_at     = NOW()
+             WHERE organization_id = ?
+               AND check_out_time IS NULL
+               AND status NOT IN ('completed','no_show','cancelled','auto_completed')"
+        );
+        $stmt->execute([$orgId]);
+        $closed = $stmt->rowCount();
+
+        $_SESSION['flash'] = [
+            'type'    => 'success',
+            'message' => number_format($closed) . ' open visitor record' . ($closed !== 1 ? 's' : '') . ' marked as checked out.',
+        ];
+        $this->redirect('/admin/live');
+    }
+
     public function liveDemo(array $params): void
     {
         $this->requireAuth();

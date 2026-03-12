@@ -73,7 +73,8 @@ $router->get('/admin/analytics', [AdminController::class, 'analytics']);
 // ── Admin — dashboard & visits ───────────────────────────────────
 $router->get('/admin',               [AdminController::class, 'dashboard']);
 $router->get( '/admin/live',              [AdminController::class, 'live']);
-$router->post('/admin/live/bulk-checkout',[AdminController::class, 'bulkCheckout']);
+$router->post('/admin/live/bulk-checkout', [AdminController::class, 'bulkCheckout']);
+$router->post('/admin/live/checkout-all',  [AdminController::class, 'checkoutAll']);
 $router->get('/admin/live/poll',     [AdminController::class, 'livePoll']);
 $router->get('/admin/live/demo',     [AdminController::class, 'liveDemo']);
 $router->get('/admin/history',      [AdminController::class, 'history']);
