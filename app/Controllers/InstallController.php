@@ -49,12 +49,35 @@ class InstallController extends Controller
 
         $src = file_get_contents($legacyConfig);
 
-        // Extract the four hardcoded variables from the getDBConnection() function
         $host = $user = $pass = $name = null;
+
+        // Format 1: $db_server = '...'; $db_username = '...'; etc.
         if (preg_match('/\$db_server\s*=\s*["\']([^"\']+)["\']/', $src, $m))   $host = $m[1];
         if (preg_match('/\$db_username\s*=\s*["\']([^"\']+)["\']/', $src, $m)) $user = $m[1];
         if (preg_match('/\$db_password\s*=\s*["\']([^"\']+)["\']/', $src, $m)) $pass = $m[1];
         if (preg_match('/\$db_database\s*=\s*["\']([^"\']+)["\']/', $src, $m)) $name = $m[1];
+
+        // Format 2: new PDO("mysql:host=...;dbname=...", "user", "pass")
+        if (!$host || !$user || !$name) {
+            if (preg_match('/new\s+PDO\s*\(\s*["\']mysql:host=([^;]+);dbname=([^"\']+)["\']/', $src, $m)) {
+                $host = $host ?: $m[1];
+                $name = $name ?: $m[2];
+            }
+            if (preg_match('/new\s+PDO\s*\([^,]+,\s*["\']([^"\']+)["\']/', $src, $m)) {
+                $user = $user ?: $m[1];
+            }
+            if (preg_match('/new\s+PDO\s*\([^,]+,[^,]+,\s*["\']([^"\']*)["\']/', $src, $m)) {
+                $pass = $pass ?? $m[1];
+            }
+        }
+
+        // Format 3: $hostname / $username / $password / $database
+        if (!$host || !$user || !$name) {
+            if (preg_match('/\$hostname\s*=\s*["\']([^"\']+)["\']/', $src, $m)) $host = $host ?: $m[1];
+            if (preg_match('/\$username\s*=\s*["\']([^"\']+)["\']/', $src, $m)) $user = $user ?: $m[1];
+            if (preg_match('/\$password\s*=\s*["\']([^"\']*)["\']/', $src, $m)) $pass = $pass ?? $m[1];
+            if (preg_match('/\$database\s*=\s*["\']([^"\']+)["\']/', $src, $m)) $name = $name ?: $m[1];
+        }
 
         if (!$host || !$user || !$name) {
             return false; // Could not parse — leave wizard to ask manually
