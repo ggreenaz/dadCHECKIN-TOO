@@ -708,7 +708,11 @@ class InstallController extends Controller
         $guided = !empty($_SESSION['install_guided']);
         unset($_SESSION['install_max_step'], $_SESSION['install_guided']);
 
-        $_SESSION['flash'] = ['type' => 'success', 'message' => 'Installation complete. Welcome to CheckIn!'];
+        // Install auto-checkout cron
+        $cronLine = "*/15 * * * * php " . BASE_PATH . "/scripts/auto_checkout.php >> /var/log/checkin-auto-checkout.log 2>&1";
+        $this->installCronJob($cronLine, '# dadCHECKIN-TOO auto-checkout');
+
+        $_SESSION['flash'] = ['type' => 'success', 'message' => 'Installation complete. Welcome to dadCHECKIN-TOO!'];
 
         if ($guided) {
             $db   = Database::getInstance();
@@ -1210,6 +1214,26 @@ class InstallController extends Controller
             'message' => "{$totalV} visits — Migrated: {$inserted}, Skipped: {$skippedV}, Unmapped: {$unmapped}",
             'pct' => 100]);
 
+        // ── Auto-close stale open records from v1 ────────────────
+        // Any visit still "checked_in" with a check-in time older than 24 hours
+        // was never properly closed in v1. Mark them all as auto_completed so
+        // the Live Logs page starts clean for every upgrader.
+        $staleStmt = $dstPdo->prepare(
+            "UPDATE visits
+             SET check_out_time = check_in_time,
+                 status         = 'auto_completed',
+                 updated_at     = NOW()
+             WHERE organization_id = ?
+               AND check_out_time IS NULL
+               AND status = 'checked_in'
+               AND check_in_time < DATE_SUB(NOW(), INTERVAL 24 HOUR)"
+        );
+        $staleStmt->execute([$orgId]);
+        $staleClosed = $staleStmt->rowCount();
+        if ($staleClosed > 0) {
+            $sse('log', ['message' => "Auto-closed {$staleClosed} stale v1 record(s) with no checkout time."]);
+        }
+
         $sse('done', ['success' => true, 'message' => '✓ Migration complete.']);
     }
 
@@ -1376,8 +1400,31 @@ class InstallController extends Controller
             $_SESSION['guided_upgrade_org_id'],
             $_SESSION['install_max_step']
         );
-        $_SESSION['flash'] = ['type' => 'success', 'message' => 'Upgrade complete! Welcome to CheckIn.'];
+
+        // ── Install auto-checkout cron job ───────────────────────
+        // Try to install via www-data's crontab. If that fails (permissions),
+        // we silently skip — the admin can add it manually from Settings docs.
+        $cronLine  = "*/15 * * * * php " . BASE_PATH . "/scripts/auto_checkout.php >> /var/log/checkin-auto-checkout.log 2>&1";
+        $marker    = '# dadCHECKIN-TOO auto-checkout';
+        $this->installCronJob($cronLine, $marker);
+
+        $_SESSION['flash'] = ['type' => 'success', 'message' => 'Upgrade complete! Welcome to dadCHECKIN-TOO.'];
         $this->redirect('/admin/setup');
+    }
+
+    private function installCronJob(string $cronLine, string $marker): void
+    {
+        try {
+            $existing = shell_exec('crontab -l 2>/dev/null') ?? '';
+            if (str_contains($existing, $marker)) return; // already installed
+            $new = rtrim($existing) . "\n{$marker}\n{$cronLine}\n";
+            $tmp = tempnam(sys_get_temp_dir(), 'cron');
+            file_put_contents($tmp, $new);
+            shell_exec("crontab {$tmp}");
+            @unlink($tmp);
+        } catch (\Throwable $e) {
+            // Non-fatal — admin can install manually
+        }
     }
 
     // ── Check if a database name is available ────────────────────
