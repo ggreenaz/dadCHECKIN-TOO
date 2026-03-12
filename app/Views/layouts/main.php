@@ -39,8 +39,10 @@ body{background:{$__bg}!important;}</style>\n";
 
 <header class="site-header">
     <?php if (!empty($__theme['logo'])): ?>
-        <img src="/uploads/logos/<?= htmlspecialchars($__theme['logo'], ENT_QUOTES) ?>"
-             alt="Logo" style="height:48px;border-radius:4px;margin-right:12px;flex-shrink:0;">
+        <a href="/admin" style="display:flex;align-items:center;flex-shrink:0;">
+            <img src="/uploads/logos/<?= htmlspecialchars($__theme['logo'], ENT_QUOTES) ?>"
+                 alt="Logo" style="height:48px;border-radius:4px;margin-right:12px;">
+        </a>
     <?php endif; ?>
     <div class="header-inner">
         <span class="site-brand">
