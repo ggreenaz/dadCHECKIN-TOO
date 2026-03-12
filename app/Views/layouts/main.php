@@ -5,11 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= \App\Core\View::e($title ?? 'dadCHECKIN-TOO') ?></title>
     <link rel="stylesheet" href="/css/app.css">
+    <?php
+    // Inject theme CSS overrides if a custom theme is saved
+    try {
+        $__db  = \App\Core\Database::getInstance();
+        $__cfg = require BASE_PATH . '/config/app.php';
+        $__org = $__db->prepare("SELECT settings FROM organizations WHERE slug = ? LIMIT 1");
+        $__org->execute([$__cfg['org_slug'] ?? '']);
+        $__settings = json_decode($__org->fetchColumn() ?? '{}', true) ?: [];
+        $__theme    = $__settings['theme'] ?? [];
+        if (!empty($__theme['primary'])) {
+            $__p  = htmlspecialchars($__theme['primary'],     ENT_QUOTES);
+            $__h  = htmlspecialchars($__theme['header_bg'],   ENT_QUOTES);
+            $__bg = htmlspecialchars($__theme['bg'],          ENT_QUOTES);
+            $__ht = htmlspecialchars($__theme['header_text'] ?? '#ffffff', ENT_QUOTES);
+            // Derive hover as slightly darker version of primary
+            echo "<style>:root{--primary:{$__p};--primary-hover:{$__p};--header-bg:{$__h};--header-text:{$__ht};--bg:{$__bg};}
+.site-header{background:{$__h}!important;color:{$__ht}!important;}
+.site-header a,.site-brand,.site-org,.header-nav a{color:{$__ht}!important;}
+.button{background:{$__p}!important;}
+.button:hover{filter:brightness(.9);}
+body{background:{$__bg}!important;}</style>\n";
+        }
+    } catch (\Throwable $__e) { /* DB not ready yet — skip */ }
+    ?>
 </head>
 <body>
 
 <header class="site-header">
     <div class="header-inner">
+        <?php if (!empty($__theme['logo'])): ?>
+            <img src="/uploads/logos/<?= htmlspecialchars($__theme['logo'], ENT_QUOTES) ?>"
+                 alt="Logo" style="height:32px;border-radius:4px;margin-right:4px;">
+        <?php endif; ?>
         <span class="site-brand">dadCHECKIN-TOO</span>
         <?php if (!empty($org)): ?>
             <span class="site-org"><?= \App\Core\View::e($org['name']) ?></span>
@@ -74,6 +102,7 @@
                             <div class="user-dropdown-divider"></div>
                         <?php endif; ?>
                         <a href="/admin/settings" class="user-dropdown-item">Settings</a>
+                        <a href="/admin/settings/theme" class="user-dropdown-item">Theme &amp; Appearance</a>
                         <a href="/admin/docs" class="user-dropdown-item">Help &amp; Docs</a>
                         <div class="user-dropdown-divider"></div>
                         <a href="/auth/logout" class="user-dropdown-item user-dropdown-signout">Sign Out</a>
