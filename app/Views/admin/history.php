@@ -17,8 +17,8 @@ foreach ($visits as $v) {
     $byDay[$day] = ($byDay[$day] ?? 0) + 1;
     $dayHours[$day][$hour] = ($dayHours[$day][$hour] ?? 0) + 1;
 
-    if ($v['status'] === 'completed')  $completedCount++;
-    if ($v['status'] === 'no_show')    $noShowCount++;
+    if (in_array($v['status'], ['completed','auto_completed'])) $completedCount++;
+    if ($v['status'] === 'no_show') $noShowCount++;
     if ($v['duration_min'] > 0) {
         $totalMinutes += $v['duration_min'];
         $durCount++;
@@ -104,7 +104,7 @@ $daySpan   = count($dayKeys);
                 <label for="status">Status</label>
                 <select name="status" id="status">
                     <option value="">All</option>
-                    <?php foreach (['checked_in','completed','no_show','cancelled'] as $s): ?>
+                    <?php foreach (['checked_in','completed','auto_completed','no_show','cancelled'] as $s): ?>
                         <option value="<?= $s ?>"
                             <?= ($filters['status'] ?? '') === $s ? 'selected' : '' ?>>
                             <?= ucfirst(str_replace('_', ' ', $s)) ?>

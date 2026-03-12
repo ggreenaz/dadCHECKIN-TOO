@@ -63,7 +63,7 @@ class AdminController extends Controller
              FROM visits v
              JOIN hosts h          ON v.host_id       = h.host_id
              LEFT JOIN departments d ON h.department_id = d.department_id
-             WHERE v.organization_id = ? AND v.status = 'completed'
+             WHERE v.organization_id = ? AND v.status IN ('completed','auto_completed')
              GROUP BY h.host_id
              ORDER BY visit_cnt DESC
              LIMIT 15"
@@ -95,7 +95,7 @@ class AdminController extends Controller
                     ROUND(AVG(TIMESTAMPDIFF(MINUTE, vi.check_in_time, vi.check_out_time))) AS avg_min
              FROM visits vi
              JOIN visitors v ON vi.visitor_id = v.visitor_id
-             WHERE vi.organization_id = ? AND vi.status = 'completed'
+             WHERE vi.organization_id = ? AND vi.status IN ('completed','auto_completed')
              GROUP BY v.visitor_id
              ORDER BY visit_cnt DESC
              LIMIT 12"
@@ -281,7 +281,7 @@ class AdminController extends Controller
             "SELECT
                 COUNT(*)                                                            AS total,
                 SUM(status = 'checked_in')                                          AS active,
-                SUM(status = 'completed')                                           AS completed,
+                SUM(status IN ('completed','auto_completed'))                        AS completed,
                 SUM(status = 'no_show')                                             AS no_show,
                 SUM(status = 'cancelled')                                           AS cancelled,
                 SUM(status = 'checked_in'
@@ -306,7 +306,7 @@ class AdminController extends Controller
              LEFT JOIN hosts h     ON vi.host_id    = h.host_id
              LEFT JOIN visit_reasons vr ON vi.reason_id = vr.reason_id
              WHERE vi.organization_id = ?
-               AND vi.status = 'completed'
+               AND vi.status IN ('completed','auto_completed')
                AND DATE(vi.check_in_time) = ?
              ORDER BY vi.check_out_time DESC
              LIMIT 8"
@@ -337,7 +337,7 @@ class AdminController extends Controller
         $stmt = $db->prepare(
             "SELECT
                 COUNT(*)                                                           AS total,
-                SUM(status = 'completed')                                          AS completed,
+                SUM(status IN ('completed','auto_completed'))                       AS completed,
                 SUM(status = 'no_show')                                            AS no_show,
                 SUM(status = 'checked_in')                                         AS active,
                 SUM(status = 'checked_in'
@@ -365,7 +365,7 @@ class AdminController extends Controller
              JOIN visitors v           ON vi.visitor_id = v.visitor_id
              LEFT JOIN hosts h         ON vi.host_id    = h.host_id
              LEFT JOIN visit_reasons vr ON vi.reason_id = vr.reason_id
-             WHERE vi.organization_id = ? AND vi.status = 'completed'
+             WHERE vi.organization_id = ? AND vi.status IN ('completed','auto_completed')
                AND DATE(vi.check_in_time) = ?
              ORDER BY vi.check_out_time DESC LIMIT 6"
         );
