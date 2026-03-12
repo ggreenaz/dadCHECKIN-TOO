@@ -245,6 +245,7 @@ class CheckinController extends Controller
     {
         $firstName = $_SESSION['checkin_success_name'] ?? '';
         unset($_SESSION['checkin_success_name']);
+        unset($_SESSION['kiosk_visitor']);
         $this->view->render('checkin/success', [
             'title'     => 'Checked In!',
             'firstName' => $firstName,
