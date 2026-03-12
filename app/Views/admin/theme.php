@@ -227,6 +227,23 @@
             </div>
         </div>
 
+        <!-- ── Brand Name ────────────────────────────────────── -->
+        <h3 style="font-size:.9rem;font-weight:700;margin:24px 0 12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;">
+            Brand Name
+        </h3>
+        <div class="form-group">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+                <input type="checkbox" name="use_org_name" id="use-org-name" value="1"
+                       <?= !empty($theme['use_org_name']) ? 'checked' : '' ?>
+                       style="width:18px;height:18px;cursor:pointer;">
+                <span>Show organization name in header instead of "dadCHECKIN-TOO"</span>
+            </label>
+            <small style="color:var(--text-muted);margin-top:6px;display:block;">
+                Currently: <strong><?= View::e($org['name'] ?? 'Your Organization') ?></strong>
+                — change the name in <a href="/admin/settings">Organization Settings</a>.
+            </small>
+        </div>
+
         <!-- ── Logo Upload ────────────────────────────────────── -->
         <h3 style="font-size:.9rem;font-weight:700;margin:24px 0 12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;">
             Organization Logo

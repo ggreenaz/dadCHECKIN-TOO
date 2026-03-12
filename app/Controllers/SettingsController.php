@@ -83,11 +83,12 @@ class SettingsController extends Controller
         $existing = json_decode($row->fetchColumn() ?? '{}', true) ?: [];
 
         $theme = [
-            'preset'      => preg_replace('/[^a-z]/', '', $this->request->input('preset', 'default')),
-            'primary'     => $this->sanitizeHex($this->request->input('primary',     '#0073b1')),
-            'header_bg'   => $this->sanitizeHex($this->request->input('header_bg',   '#0c2340')),
-            'bg'          => $this->sanitizeHex($this->request->input('bg',           '#f1f5f9')),
-            'header_text' => $this->sanitizeHex($this->request->input('header_text', '#ffffff')),
+            'preset'       => preg_replace('/[^a-z]/', '', $this->request->input('preset', 'default')),
+            'primary'      => $this->sanitizeHex($this->request->input('primary',     '#0073b1')),
+            'header_bg'    => $this->sanitizeHex($this->request->input('header_bg',   '#0c2340')),
+            'bg'           => $this->sanitizeHex($this->request->input('bg',           '#f1f5f9')),
+            'header_text'  => $this->sanitizeHex($this->request->input('header_text', '#ffffff')),
+            'use_org_name' => (bool)$this->request->input('use_org_name', false),
         ];
 
         // Handle logo upload

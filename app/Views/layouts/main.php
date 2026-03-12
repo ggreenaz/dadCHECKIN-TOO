@@ -38,7 +38,17 @@ body{background:{$__bg}!important;}</style>\n";
             <img src="/uploads/logos/<?= htmlspecialchars($__theme['logo'], ENT_QUOTES) ?>"
                  alt="Logo" style="height:32px;border-radius:4px;margin-right:4px;">
         <?php endif; ?>
-        <span class="site-brand">dadCHECKIN-TOO</span>
+        <span class="site-brand">
+            <?php if (!empty($__theme['use_org_name']) && !empty($__theme['use_org_name'])): ?>
+                <?php
+                    $__orgRow = $__db->prepare("SELECT name FROM organizations WHERE slug = ? LIMIT 1");
+                    $__orgRow->execute([$__cfg['org_slug'] ?? '']);
+                    echo htmlspecialchars($__orgRow->fetchColumn() ?: 'dadCHECKIN-TOO', ENT_QUOTES);
+                ?>
+            <?php else: ?>
+                dadCHECKIN-TOO
+            <?php endif; ?>
+        </span>
         <?php if (!empty($org)): ?>
             <span class="site-org"><?= \App\Core\View::e($org['name']) ?></span>
         <?php endif; ?>
