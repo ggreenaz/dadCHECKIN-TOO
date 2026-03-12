@@ -34,16 +34,19 @@ Built with PHP 8.1+, MySQL 8, and Apache. No frameworks. No composer. Just drop 
 
 ```bash
 # 1. Clone into your web root
-git clone https://github.com/ggreenaz/dadcheckin-too.git /var/www/checkin
+git clone https://github.com/ggreenaz/dadCHECKIN-TOO.git /var/www/checkin
 
-# 2. Set permissions
+# 2. If running as root, tell git it's safe to operate here
+git config --global --add safe.directory /var/www/checkin
+
+# 3. Set permissions
 chown -R www-data:www-data /var/www/checkin
 chmod -R 755 /var/www/checkin
-chmod 664 /var/www/checkin/config/database.php
+chmod 775 /var/www/checkin/config
 
-# 3. Point Apache at the public/ directory (see docs/install-guide for full vhost config)
+# 4. Point Apache at the public/ directory (see docs/install-guide for full vhost config)
 
-# 4. Visit http://yourdomain.com/install in your browser
+# 5. Visit http://yourdomain.com/install in your browser
 #    The wizard will guide you through the rest.
 ```
 
@@ -55,6 +58,10 @@ Run these commands **inside your existing dadtoo directory** — the new code in
 
 ```bash
 cd /var/www/dadtoo        # your existing dadtoo directory
+
+# If running as root, tell git it's safe to operate here
+git config --global --add safe.directory /var/www/dadtoo
+
 git init
 git remote add origin https://github.com/ggreenaz/dadCHECKIN-TOO.git
 git fetch origin
@@ -63,6 +70,8 @@ chown -R www-data:www-data .
 chmod -R 755 .
 chmod 775 config
 ```
+
+> **Note:** If your directory is named something other than `dadtoo`, replace `/var/www/dadtoo` in the `safe.directory` line with your actual path.
 
 Then visit `http://yourdomain.com/install` — the wizard detects your existing dadtoo database and walks you through the **Guided Upgrade**. No re-entering of credentials required.
 
