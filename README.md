@@ -68,11 +68,12 @@ That's it. The script:
 
 Then visit `http://yourdomain.com/install` — the wizard detects your existing dadtoo database and walks you through the **Guided Upgrade**. No re-entering of credentials required.
 
-### Manual steps (if curl is unavailable)
+### Manual steps
 
 ```bash
-cd /var/www/dadtoo
-git config --global --add safe.directory "$(pwd)"
+cd /var/www/html                 # replace with your actual directory path
+
+git config --global --add safe.directory /var/www/html
 git init
 git remote add origin https://github.com/ggreenaz/dadCHECKIN-TOO.git
 git fetch origin
@@ -81,6 +82,8 @@ chown -R www-data:www-data .
 chmod -R 755 .
 chmod 775 config
 ```
+
+Then visit `http://yourdomain.com/install` in your browser.
 
 ---
 
