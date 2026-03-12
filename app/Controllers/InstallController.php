@@ -712,6 +712,12 @@ class InstallController extends Controller
         $cronLine = "*/15 * * * * php " . BASE_PATH . "/scripts/auto_checkout.php >> /var/log/checkin-auto-checkout.log 2>&1";
         $this->installCronJob($cronLine, '# dadCHECKIN-TOO auto-checkout');
 
+        // Seed demo data if requested
+        if ($this->request->input('load_demo')) {
+            $script = BASE_PATH . '/scripts/seed_demo.php';
+            shell_exec(escapeshellcmd("php {$script}") . ' --org-id=' . (int)$orgId . ' 2>&1');
+        }
+
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Installation complete. Welcome to dadCHECKIN-TOO!'];
 
         if ($guided) {

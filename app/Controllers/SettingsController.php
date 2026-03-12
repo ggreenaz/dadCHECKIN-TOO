@@ -11,16 +11,80 @@ class SettingsController extends Controller
         $this->requireRole('org_admin');
         $orgId = $this->orgId();
         $db    = Database::getInstance();
-        $org   = $db->prepare("SELECT * FROM organizations WHERE organization_id = ?");
-        $org->execute([$orgId]);
-        $org = $org->fetch();
+        $stmt  = $db->prepare("SELECT * FROM organizations WHERE organization_id = ?");
+        $stmt->execute([$orgId]);
+        $org      = $stmt->fetch();
+        $settings = json_decode($org['settings'] ?? '{}', true) ?: [];
+        $demoData = $settings['demo_data'] ?? null;
 
         $this->view->render('admin/settings', [
-            'title'    => 'Organization Settings',
-            'helpSlug' => 'settings',
-            'org'      => $org,
-            'flash'    => $this->flash(),
+            'title'        => 'Organization Settings',
+            'helpSlug'     => 'settings',
+            'org'          => $org,
+            'hasDemoData'  => !empty($demoData),
+            'demoSeededAt' => $demoData['seeded_at'] ?? '',
+            'flash'        => $this->flash(),
         ]);
+    }
+
+    public function expungeDemo(array $params): void
+    {
+        $this->requireRole('org_admin');
+        $orgId = $this->orgId();
+        $db    = Database::getInstance();
+
+        $row = $db->prepare("SELECT settings FROM organizations WHERE organization_id = ?");
+        $row->execute([$orgId]);
+        $settings = json_decode($row->fetchColumn() ?? '{}', true) ?: [];
+        $demo     = $settings['demo_data'] ?? null;
+
+        if (!$demo) {
+            $_SESSION['flash'] = ['type' => 'error', 'message' => 'No demo data found.'];
+            $this->redirect('/admin/settings');
+            return;
+        }
+
+        // Delete visits
+        if (!empty($demo['visit_ids'])) {
+            $ph = implode(',', array_fill(0, count($demo['visit_ids']), '?'));
+            $db->prepare("DELETE FROM visits WHERE visit_id IN ({$ph}) AND organization_id = ?")
+               ->execute(array_merge($demo['visit_ids'], [$orgId]));
+        }
+        // Delete visitors (only if they have no other visits)
+        if (!empty($demo['visitor_ids'])) {
+            foreach ($demo['visitor_ids'] as $vid) {
+                $chk = $db->prepare("SELECT COUNT(*) FROM visits WHERE visitor_id = ?");
+                $chk->execute([$vid]);
+                if ((int)$chk->fetchColumn() === 0) {
+                    $db->prepare("DELETE FROM visitors WHERE visitor_id = ?")->execute([$vid]);
+                }
+            }
+        }
+        // Delete hosts
+        if (!empty($demo['host_ids'])) {
+            $ph = implode(',', array_fill(0, count($demo['host_ids']), '?'));
+            $db->prepare("DELETE FROM hosts WHERE host_id IN ({$ph}) AND organization_id = ?")
+               ->execute(array_merge($demo['host_ids'], [$orgId]));
+        }
+        // Delete visit reasons
+        if (!empty($demo['reason_ids'])) {
+            $ph = implode(',', array_fill(0, count($demo['reason_ids']), '?'));
+            $db->prepare("DELETE FROM visit_reasons WHERE reason_id IN ({$ph}) AND organization_id = ?")
+               ->execute(array_merge($demo['reason_ids'], [$orgId]));
+        }
+        // Delete departments
+        if (!empty($demo['department_ids'])) {
+            $ph = implode(',', array_fill(0, count($demo['department_ids']), '?'));
+            $db->prepare("DELETE FROM departments WHERE department_id IN ({$ph}) AND organization_id = ?")
+               ->execute(array_merge($demo['department_ids'], [$orgId]));
+        }
+
+        unset($settings['demo_data']);
+        $db->prepare("UPDATE organizations SET settings = ? WHERE organization_id = ?")
+           ->execute([json_encode($settings), $orgId]);
+
+        $_SESSION['flash'] = ['type' => 'success', 'message' => 'Demo data expunged. Your installation is now clean.'];
+        $this->redirect('/admin/settings');
     }
 
     public function save(array $params): void

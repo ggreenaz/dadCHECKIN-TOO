@@ -108,3 +108,23 @@ $acStatus     = $ac['status']         ?? 'auto_completed';
     <p style="color:var(--text-muted);margin-bottom:1rem;">Configure login providers — Local accounts, LDAP/Active Directory, Google SSO, or Microsoft Azure.</p>
     <a href="/admin/setup/auth" class="button">Manage Authentication Settings</a>
 </div>
+
+<?php if (!empty($hasDemoData)): ?>
+<div class="card" style="margin-top:1.5rem;border-color:var(--danger);">
+    <div class="card-title" style="color:var(--danger);">Demo Data</div>
+    <p style="color:var(--text-muted);margin-bottom:6px;">
+        This installation contains demo data loaded during setup
+        (seeded <?= View::e($demoSeededAt) ?>).
+    </p>
+    <p style="color:var(--text-muted);margin-bottom:1.25rem;font-size:0.875rem;">
+        Expunging removes all demo visitors, hosts, visit reasons, departments, and visit records
+        that were created by the seeder. Your real data and settings are not affected.
+    </p>
+    <form method="POST" action="/admin/settings/expunge-demo"
+          onsubmit="return confirm('Permanently delete all demo data? This cannot be undone.')">
+        <button type="submit" class="button" style="background:var(--danger);border-color:var(--danger);">
+            Expunge Demo Data
+        </button>
+    </form>
+</div>
+<?php endif; ?>

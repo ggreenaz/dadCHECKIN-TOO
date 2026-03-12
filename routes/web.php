@@ -121,7 +121,8 @@ $router->get('/admin/docs/:page',       [AdminController::class, 'docs']);
 // ── Admin — settings ─────────────────────────────────────────────
 $router->get( '/admin/settings',               [SettingsController::class, 'index']);
 $router->post('/admin/settings',               [SettingsController::class, 'save']);
-$router->post('/admin/settings/auto-checkout', [SettingsController::class, 'saveAutoCheckout']);
+$router->post('/admin/settings/auto-checkout',  [SettingsController::class, 'saveAutoCheckout']);
+$router->post('/admin/settings/expunge-demo',   [SettingsController::class, 'expungeDemo']);
 $router->get( '/admin/settings/theme',         [SettingsController::class, 'theme']);
 $router->post('/admin/settings/theme',         [SettingsController::class, 'saveTheme']);
 
