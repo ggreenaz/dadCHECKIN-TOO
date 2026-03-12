@@ -145,6 +145,7 @@ CREATE TABLE IF NOT EXISTS users (
     google_id       VARCHAR(255) NULL,
     microsoft_id    VARCHAR(255) NULL,
     ldap_dn         VARCHAR(500) NULL,
+    permissions     JSON        NULL,
     active          TINYINT(1)  NOT NULL DEFAULT 1,
     last_login      DATETIME    NULL,
     created_at      DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
