@@ -22,7 +22,7 @@
             // Derive hover as slightly darker version of primary
             echo "<style>:root{--primary:{$__p};--primary-hover:{$__p};--header-bg:{$__h};--header-text:{$__ht};--bg:{$__bg};}
 .site-header{background:{$__h}!important;color:{$__ht}!important;}
-.site-header a,.site-brand,.site-org,.header-nav a{color:{$__ht}!important;}
+.site-header a:not(.user-dropdown-item):not(.user-dropdown-signout),.site-brand,.site-org,.header-nav a{color:{$__ht}!important;}
 .button{background:{$__p}!important;}
 .button:hover{filter:brightness(.9);}
 body{background:{$__bg}!important;}</style>\n";
