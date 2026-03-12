@@ -23,6 +23,11 @@
             echo "<style>:root{--primary:{$__p};--primary-hover:{$__p};--header-bg:{$__h};--header-text:{$__ht};--bg:{$__bg};}
 .site-header{background:{$__h}!important;color:{$__ht}!important;}
 .site-header a:not(.user-dropdown-item):not(.user-dropdown-signout),.site-brand,.site-org,.header-nav a{color:{$__ht}!important;}
+.user-dropdown{background:#ffffff!important;color:#0f172a!important;}
+.user-dropdown-item{color:#0f172a!important;}
+.user-dropdown-name{color:#0f172a!important;}
+.user-dropdown-email{color:#64748b!important;}
+.user-dropdown-signout{color:#dc2626!important;}
 .button{background:{$__p}!important;}
 .button:hover{filter:brightness(.9);}
 body{background:{$__bg}!important;}</style>\n";
