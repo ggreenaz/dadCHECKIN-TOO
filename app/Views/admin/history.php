@@ -19,7 +19,7 @@ foreach ($visits as $v) {
 
     if (in_array($v['status'], ['completed','auto_completed'])) $completedCount++;
     if ($v['status'] === 'no_show') $noShowCount++;
-    if ($v['duration_min'] > 0) {
+    if ($v['duration_min'] > 0 && $v['status'] !== 'auto_completed') {
         $totalMinutes += $v['duration_min'];
         $durCount++;
     }

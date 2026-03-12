@@ -59,7 +59,7 @@ class AdminController extends Controller
             "SELECT h.host_id, h.name AS host_name,
                     d.name            AS dept_name,
                     COUNT(*)          AS visit_cnt,
-                    ROUND(AVG(TIMESTAMPDIFF(MINUTE, v.check_in_time, v.check_out_time))) AS avg_min
+                    ROUND(AVG(NULLIF(TIMESTAMPDIFF(MINUTE, v.check_in_time, v.check_out_time), 0))) AS avg_min
              FROM visits v
              JOIN hosts h          ON v.host_id       = h.host_id
              LEFT JOIN departments d ON h.department_id = d.department_id
@@ -92,7 +92,7 @@ class AdminController extends Controller
             "SELECT v.visitor_id, v.first_name, v.last_name,
                     COUNT(*)    AS visit_cnt,
                     MAX(vi.check_in_time) AS last_visit,
-                    ROUND(AVG(TIMESTAMPDIFF(MINUTE, vi.check_in_time, vi.check_out_time))) AS avg_min
+                    ROUND(AVG(NULLIF(TIMESTAMPDIFF(MINUTE, vi.check_in_time, vi.check_out_time), 0))) AS avg_min
              FROM visits vi
              JOIN visitors v ON vi.visitor_id = v.visitor_id
              WHERE vi.organization_id = ? AND vi.status IN ('completed','auto_completed')
